@@ -1,0 +1,22 @@
+﻿  scrollBar.cpp
+C:\Users\Admin\source\repos\Cauldron\cauldron-gui\_src\scrollBar.cpp(103,38): warning C4244: '=': conversion from 'f64' to 'T', possible loss of data
+          with
+          [
+              T=f32
+          ]
+C:\Users\Admin\source\repos\Cauldron\cauldron-gui\_src\scrollBar.cpp(104,37): warning C4244: '=': conversion from 'f64' to 'T', possible loss of data
+          with
+          [
+              T=f32
+          ]
+C:\Users\Admin\source\repos\Cauldron\cauldron-gui\_src\scrollBar.cpp(117,38): warning C4244: '=': conversion from 'f64' to 'T', possible loss of data
+          with
+          [
+              T=f32
+          ]
+C:\Users\Admin\source\repos\Cauldron\cauldron-gui\_src\scrollBar.cpp(118,37): warning C4244: '=': conversion from 'f64' to 'T', possible loss of data
+          with
+          [
+              T=f32
+          ]
+  cauldron-gui.vcxproj -> C:\Users\Admin\source\repos\cauldron\_build\cauldron-gui.lib

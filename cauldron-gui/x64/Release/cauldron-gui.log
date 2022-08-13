@@ -1,0 +1,8 @@
+﻿  textInput.cpp
+C:\Users\Admin\source\repos\Cauldron\cauldron-gui\_src\textInput.cpp(123,35): warning C4267: 'initializing': conversion from 'size_t' to 'i32', possible loss of data
+C:\Users\Admin\source\repos\Cauldron\cauldron-gui\_src\textInput.cpp(149,18): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
+C:\Users\Admin\source\repos\Cauldron\cauldron-gui\_src\textInput.cpp(167,19): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
+C:\Users\Admin\source\repos\Cauldron\cauldron-gui\_src\textInput.cpp(179,19): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
+C:\Users\Admin\source\repos\Cauldron\cauldron-gui\_src\textInput.cpp(202,20): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
+C:\Users\Admin\source\repos\Cauldron\cauldron-gui\_src\textInput.cpp(223,21): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
+  cauldron-gui.vcxproj -> C:\Users\Admin\source\repos\cauldron\_build\cauldron-gui.lib

@@ -1,0 +1,20 @@
+﻿  clock.cpp
+  key.cpp
+  message.cpp
+C:\Users\Admin\source\repos\Cauldron\cauldron-platform\_src\message.cpp(44,17): warning C4311: 'type cast': pointer truncation from 'cauldron::platform::thread::id *' to 'DWORD'
+C:\Users\Admin\source\repos\Cauldron\cauldron-platform\_src\message.cpp(44,17): warning C4302: 'type cast': truncation from 'cauldron::platform::thread::id *' to 'DWORD'
+  mutex.cpp
+C:\Users\Admin\source\repos\Cauldron\cauldron-platform\_src\mutex.cpp(26,41): warning C4309: 'argument': truncation of constant value
+  semaphore.cpp
+C:\Users\Admin\source\repos\Cauldron\cauldron-platform\_src\semaphore.cpp(22,41): warning C4309: 'argument': truncation of constant value
+  task.cpp
+C:\Users\Admin\source\repos\Cauldron\cauldron-platform\_src\task.cpp(10,31): warning C4309: 'argument': truncation of constant value
+C:\Users\Admin\source\repos\Cauldron\cauldron-platform\_src\task.cpp(18,36): warning C4309: 'argument': truncation of constant value
+C:\Users\Admin\source\repos\Cauldron\cauldron-platform\_src\task.cpp(22,31): warning C4309: 'argument': truncation of constant value
+  thread.cpp
+C:\Users\Admin\source\repos\Cauldron\cauldron-platform\_src\thread.cpp(25,41): warning C4312: 'type cast': conversion from 'DWORD' to 'cauldron::platform::thread::id *' of greater size
+C:\Users\Admin\source\repos\Cauldron\cauldron-platform\_src\thread.cpp(28,43): warning C4312: 'type cast': conversion from 'DWORD' to 'cauldron::platform::thread::id *' of greater size
+C:\Users\Admin\source\repos\Cauldron\cauldron-platform\_src\thread.cpp(32,41): warning C4309: 'argument': truncation of constant value
+C:\Users\Admin\source\repos\Cauldron\cauldron-platform\_src\thread.cpp(40,36): warning C4309: 'argument': truncation of constant value
+  Generating Code...
+  cauldron-platform.vcxproj -> C:\Users\Admin\source\repos\cauldron\_build\cauldron-platform.lib
