@@ -4,33 +4,48 @@
 #include <memory>
 #pragma once
 namespace cauldron::gui {
+
+	  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	 // L A B E L   C O N T R O L - - - - - - - - - - - - - - - - - - - - - - -
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 	class label : public anchoredControl {
 	public:
 		label();
 
+		//
+		// Getters
+
 		std::wstring getText() const;
-		std::shared_ptr<paint::font> getFont() const;
 		std::shared_ptr<theme> getTheme() const;
-		paint::textAlign getHorizontalAlignment() const;
-		paint::textAlign getVerticalAlignment() const;
+		std::shared_ptr<paint::font> getFont() const;
+		paint::alignment getHorizontalAlignment() const;
+		paint::alignment getVerticalAlignment() const;
+
+		//
+		// Setters
 
 		void setText(const std::wstring& new_text);
-		void setFont(std::shared_ptr<paint::font> new_font);
 		void setTheme(std::shared_ptr<theme> new_brush);
-		void setHorizontalAlignment(paint::textAlign align);
-		void setVerticalAlignment(paint::textAlign align);
+		void setFont(std::shared_ptr<paint::font> new_font);
+		void setHorizontalAlignment(paint::alignment align);
+		void setVerticalAlignment(paint::alignment align);
 
 	private:
+		
+		//
+		// Data
+
 		std::wstring _text =
 			L"";
-		std::shared_ptr<theme> _theme =
-			nullptr;
-		std::shared_ptr<paint::font> _font =
-			nullptr;
-		paint::textAlign _horizontal_align =
-			paint::textAlign::center;
-		paint::textAlign _vertical_align =
-			paint::textAlign::center;
+		std::shared_ptr<theme> _theme;
+		std::shared_ptr<paint::font> _font;
+		paint::alignment _horizontal_align =
+			paint::alignment::center;
+		paint::alignment _vertical_align =
+			paint::alignment::center;
+
+		// Handlers
 
 		static void paintLabelText(control& sender, paintData& e);
 	};

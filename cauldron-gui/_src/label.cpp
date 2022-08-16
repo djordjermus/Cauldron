@@ -1,11 +1,12 @@
 #include "../label.h"
+#include "../defaults.h"
 namespace cauldron::gui {
 	using namespace cauldron::common;
 
 
 
 	label::label() :
-		anchoredControl(){
+		anchoredControl(), _theme(defaults::getTheme()), _font(defaults::getFont()) {
 		
 		onPaint().subscribe(label::paintLabelText);
 	}
@@ -13,16 +14,16 @@ namespace cauldron::gui {
 	std::wstring label::getText() const {
 		return _text;
 	}
-	std::shared_ptr<paint::font> label::getFont() const {
-		return _font;
-	}
 	std::shared_ptr<theme> label::getTheme() const {
 		return _theme;
 	}
-	paint::textAlign label::getHorizontalAlignment() const {
+	std::shared_ptr<paint::font> label::getFont() const {
+		return _font;
+	}
+	paint::alignment label::getHorizontalAlignment() const {
 		return _horizontal_align;
 	}
-	paint::textAlign label::getVerticalAlignment() const {
+	paint::alignment label::getVerticalAlignment() const {
 		return _vertical_align;
 	}
 
@@ -30,19 +31,19 @@ namespace cauldron::gui {
 		_text = new_text;
 		refresh();
 	}
-	void label::setFont(std::shared_ptr<paint::font> new_font) {
-		_font = new_font;
-		refresh();
-	}
 	void label::setTheme(std::shared_ptr<theme> new_brush) {
 		_theme = new_brush;
 		refresh();
 	}
-	void label::setHorizontalAlignment(paint::textAlign align) {
+	void label::setFont(std::shared_ptr<paint::font> new_font) {
+		_font = new_font;
+		refresh();
+	}
+	void label::setHorizontalAlignment(paint::alignment align) {
 		_horizontal_align = align;
 		refresh();
 	}
-	void label::setVerticalAlignment(paint::textAlign align) {
+	void label::setVerticalAlignment(paint::alignment align) {
 		_vertical_align = align;
 		refresh();
 	}

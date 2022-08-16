@@ -21,9 +21,6 @@ namespace cauldron::gui {
 		virtual void setHint(const std::wstring& new_hint);
 		virtual void setSelect(const common::vector2<i32> new_select);
 
-		static std::shared_ptr<const paint::font> getDefaultTextFont();
-		static std::shared_ptr<const paint::font> getDefaultHintFont();
-
 	private:
 		std::shared_ptr<theme> _theme =
 			nullptr;
@@ -33,15 +30,13 @@ namespace cauldron::gui {
 		std::wstring _hint =
 			L"";
 
-		std::shared_ptr<const paint::font> _text_font =
-			getDefaultTextFont();
-		std::shared_ptr<const paint::font> _hint_font =
-			getDefaultHintFont();
+		std::shared_ptr<const paint::font> _text_font;
+		std::shared_ptr<const paint::font> _hint_font;
 
-		paint::textAlign _horizontal =
-			paint::textAlign::near;
-		paint::textAlign _vertical =
-			paint::textAlign::near;
+		paint::alignment _horizontal =
+			paint::alignment::near;
+		paint::alignment _vertical =
+			paint::alignment::near;
 
 		common::vector2<i32> _select =
 			common::vector2<i32>(-1, -1);

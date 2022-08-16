@@ -30,4 +30,5 @@ private:
 	void valueChanged(gui::control& sender, gui::fillbar::valueChangedData& e);
 	void fillbarMD(gui::control& sender, gui::fillbar::mouseDownData& e);
 	void valueChangedCI(gui::control& sender, gui::checkInput::valueChangedData& e);
+	void limitWindowSize(gui::control& sender, gui::control::sizingData& e);
 };

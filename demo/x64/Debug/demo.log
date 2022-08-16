@@ -1,7 +1,1 @@
-﻿  main.cpp
-C:\Users\Admin\source\repos\cauldron\demo\main.cpp(183,82): warning C4305: 'argument': truncation from 'double' to 'T'
-          with
-          [
-              T=f32
-          ]
-  demo.vcxproj -> C:\Users\Admin\source\repos\cauldron\_build\demo.exe
+﻿  demo.vcxproj -> C:\Users\Admin\source\repos\cauldron\_build\demo.exe

@@ -1,20 +1,26 @@
 #include "control.h"
 #pragma once
 namespace cauldron::gui {
+
+	  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	 // A N C H O R E D   C O N T R O L - - - - - - - - - - - - - - - - - - - -
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 	class anchoredControl : public control {
 	public:
 		anchoredControl();
 		
-		// GETTERS
+		//
+		// Getters
 
 		common::bounds2<f32> getAnchor() const;
 		common::bounds2<f32> getOffset() const;
 		common::bounds2<f32> getMargins() const;
 
-		// SETTERS
+		//
+		// Setters
 
 		virtual void setAnchor(const common::bounds2<f32>& new_anchor);
-		//virtual void setAnchor(anchorPreset);
 		virtual void setOffset(const common::bounds2<f32>& new_offset);
 		virtual void setMargins(const common::bounds2<f32>& new_margins);
 

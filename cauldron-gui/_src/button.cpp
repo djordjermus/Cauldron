@@ -1,10 +1,14 @@
 #include "../button.h"
+#include "../defaults.h"
 #include <iostream>
 
 namespace cauldron::gui {
 	using namespace cauldron::common;
+
+
+
 	button::button() :
-		anchoredControl() {
+		anchoredControl(), _font(defaults::getFont()), _theme(defaults::getTheme()) {
 
 		onGainFocus()	.subscribe(refreshOnEvent<gainFocusData>);
 		onLoseFocus()	.subscribe(refreshOnEvent<loseFocusData>);
@@ -12,20 +16,50 @@ namespace cauldron::gui {
 		onCursorLeave()	.subscribe(onCursorLeaveButton);
 		onMouseDown()	.subscribe(onMouseDownButton);
 		onMouseUp()		.subscribe(onMouseUpButton);
+		onKeyDown()		.subscribe(onKeyDownButton);
+		onKeyUp()		.subscribe(onKeyUpButton);
 		onDoubleClick()	.subscribe(onDoubleClickButton);
 		onPaint()		.subscribe(onPaintButton);
+	}
+	std::wstring button::getText() const {
+		return _text;
 	}
 	std::shared_ptr<theme> button::getTheme() const {
 		return _theme;
 	}
+	std::shared_ptr<paint::font> button::getFont() const {
+		return _font;
+	}
+	paint::alignment button::getHorizontalAlign() const {
+		return _horizontal;
+	}
+	paint::alignment button::getVerticalAlign() const {
+		return _vertical;
+	}
 
+	void button::setText(const std::wstring& new_text) {
+		_text = new_text;
+		refresh();
+	}
 	void button::setTheme(std::shared_ptr<theme> new_theme) {
 		_theme = new_theme;
 		refresh();
 	}
-	void button::setText(const std::wstring& new_text) {
-		_text = new_text;
+	void button::setFont(std::shared_ptr<paint::font> font) {
+		_font = font;
 		refresh();
+	}
+	void button::setHorizontalAlign(paint::alignment align) {
+		if (_horizontal != align) {
+			_horizontal = align;
+			refresh();
+		}
+	}
+	void button::setVerticalAlign(paint::alignment align) {
+		if (_vertical != align) {
+			_vertical = align;
+			refresh();
+		}
 	}
 
 	observable<void, control&, eventData&>& button::onClick() {
@@ -43,7 +77,7 @@ namespace cauldron::gui {
 		theme::select sel = theme::parse(
 			btn.isEnabled(),
 			btn.isCursorOver(),
-			btn._mouse_dn,
+			btn._pressed,
 			btn.isFocused());
 
 		btn._theme->getBackground(sel);
@@ -51,7 +85,6 @@ namespace cauldron::gui {
 		std::shared_ptr<const paint::brush> fg = btn._theme->getForeground(sel);
 		std::shared_ptr<const paint::brush> ol = btn._theme->getOutline(sel);
 		paint::pen pen(*ol, 2.0f);
-		paint::font f(L"trebuchet ms", 16.f, paint::font::style::bold);
 
 		paint& paint = e.getPaint();
 		paint.setSmoothing(true);
@@ -62,15 +95,15 @@ namespace cauldron::gui {
 		}
 
 		// TEXT
-		if (bg != nullptr) {
+		if (bg != nullptr && btn._font != nullptr) {
 			paint.write(
 				btn._text.c_str(),
 				btn._text.length(),
 				border, 
-				f, 
+				*btn._font,
 				*bg, 
-				paint::textAlign::center, 
-				paint::textAlign::center);
+				btn._horizontal, 
+				btn._vertical);
 		}
 
 		// FOREGROUND
@@ -81,18 +114,18 @@ namespace cauldron::gui {
 	}
 	void button::onMouseDownButton(control& sender, mouseDownData& e) {
 		button& btn = static_cast<button&>(sender);
-		btn._mouse_dn = true;
+		btn._pressed = true;
 		btn.refresh();
 	}
 	void button::onDoubleClickButton(control& sender, doubleClickData& e) {
 		button& btn = static_cast<button&>(sender);
-		btn._mouse_dn = true;
+		btn._pressed = true;
 		btn.refresh();
 	}
 	void button::onMouseUpButton(control& sender, mouseUpData& e) {
 		button& btn = static_cast<button&>(sender);
-		if (btn._mouse_dn) {
-			btn._mouse_dn = false;
+		if (btn._pressed) {
+			btn._pressed = false;
 			eventData e;
 			btn._on_click.notify(btn, e);
 		}
@@ -100,8 +133,24 @@ namespace cauldron::gui {
 	}
 	void button::onCursorLeaveButton(control& sender, cursorLeaveData& e) {
 		button& btn = static_cast<button&>(sender);
-		btn._mouse_dn = false;
+		btn._pressed = false;
 		btn.refresh();
+	}
 
+	void button::onKeyDownButton(control& sender, keyDownData& e) {
+		button& btn = static_cast<button&>(sender);
+		if (e.getKey() == key::space && btn._pressed == false) {
+			btn._pressed = true;
+			btn.refresh();
+		}
+	}
+	void button::onKeyUpButton(control& sender, keyUpData& e) {
+		button& btn = static_cast<button&>(sender);
+		if (e.getKey() == key::space && btn._pressed == true) {
+			btn._pressed = false;
+			eventData e;
+			btn._on_click.notify(btn, e);
+			btn.refresh();
+		}
 	}
 }

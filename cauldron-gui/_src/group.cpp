@@ -1,11 +1,12 @@
 #include "../group.h"
+#include "../defaults.h"
 namespace cauldron::gui {
 	using namespace cauldron::common;
 
 
 
 	group::group() :
-		anchoredControl() {
+		anchoredControl(), _theme(defaults::getTheme()) {
 		setFocusStyle(focusStyle::defer_to_child);
 
 		onPaint()		.subscribe(onPaintGroup);

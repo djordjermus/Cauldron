@@ -35,6 +35,8 @@ namespace cauldron::gui {
 		paint::bitmap* bitmap);
 	static Gdiplus::RectF makeRect(
 		const paint::bounds_t& bounds);
+	static Gdiplus::FontStyle convert(paint::font::style style);
+	static paint::font::style convert(Gdiplus::FontStyle style);
 
 #define FONT(x) reinterpret_cast<Gdiplus::Font*>((x).getCore())
 #define IMAGE(x) reinterpret_cast<Gdiplus::Image*>((x).getCore())
@@ -49,38 +51,10 @@ namespace cauldron::gui {
 #undef far;
 
 
-	//
-	// TEXT ALIGN
-	using textAlign = paint::textAlign;
-	
-	const textAlign textAlign::near((core_t*)Gdiplus::StringAlignmentNear);
-	const textAlign textAlign::center((core_t*)Gdiplus::StringAlignmentCenter);
-	const textAlign textAlign::far((core_t*)Gdiplus::StringAlignmentFar);
-	
-	textAlign::textAlign(core_t* core) : _core(core) {}
-
-
 
 	//
 	// FONT
 	using font = paint::font;
-
-	const font::style font::style::normal
-		((core_t*)(Gdiplus::FontStyleRegular));
-	const font::style font::style::bold
-		((core_t*)(Gdiplus::FontStyleBold));
-	const font::style font::style::italic
-		((core_t*)(Gdiplus::FontStyleItalic));
-	const font::style font::style::strikeout
-		((core_t*)(Gdiplus::FontStyleStrikeout));
-	const font::style font::style::underline
-		((core_t*)(Gdiplus::FontStyleUnderline));
-
-	font::style::style(core_t* core) : _core(core) {}
-	font::style::~style() {}
-	font::style font::style::operator|(font::style rhs) {
-		return font::style((core_t*)((u64)getCore() | (u64)rhs.getCore()));
-	}
 
 	font::font() : _core(nullptr) {}
 	font::font(cwstr family, f32 size, style style)
@@ -98,7 +72,7 @@ namespace cauldron::gui {
 		return FONT(*this)->GetSize();
 	}
 	font::style font::getStyle() const {
-		return style((style::core_t*)FONT(*this)->GetStyle());
+		return convert((Gdiplus::FontStyle)FONT(*this)->GetStyle());
 	}
 
 
@@ -263,15 +237,15 @@ namespace cauldron::gui {
 		i32 length,
 		const bounds_t& bounds,
 		const font& font,
-		textAlign horizontal,
-		textAlign vertical) {
+		alignment horizontal,
+		alignment vertical) {
 
 		static Gdiplus::Bitmap g_bmp(1, 1);
 		static Gdiplus::Graphics g_gfx(&g_bmp);
 
 		Gdiplus::StringFormat f = Gdiplus::StringFormat::GenericTypographic();
-		f.SetAlignment((Gdiplus::StringAlignment)(u64)horizontal.getCore());
-		f.SetLineAlignment((Gdiplus::StringAlignment)(u64)vertical.getCore());
+		f.SetAlignment((Gdiplus::StringAlignment)(u64)horizontal);
+		f.SetLineAlignment((Gdiplus::StringAlignment)(u64)vertical);
 
 		Gdiplus::RectF output = {};
 		g_gfx.MeasureString(
@@ -288,8 +262,8 @@ namespace cauldron::gui {
 		i32 length,
 		const bounds_t& bounds,
 		const font& font,
-		textAlign horizontal,
-		textAlign vertical,
+		alignment horizontal,
+		alignment vertical,
 		const vector_t& point) {
 
 		// Ready region and rect
@@ -298,8 +272,8 @@ namespace cauldron::gui {
 
 		// Compose format
 		Gdiplus::StringFormat f = Gdiplus::StringFormat::GenericDefault();
-		f.SetAlignment((Gdiplus::StringAlignment)(u64)horizontal.getCore());
-		f.SetLineAlignment((Gdiplus::StringAlignment)(u64)vertical.getCore());
+		f.SetAlignment((Gdiplus::StringAlignment)(u64)horizontal);
+		f.SetLineAlignment((Gdiplus::StringAlignment)(u64)vertical);
 
 		Gdiplus::SolidBrush sb(Gdiplus::Color::Red);
 		for (i32 i = 0; i <= length; i++) {
@@ -332,11 +306,11 @@ namespace cauldron::gui {
 		const bounds_t& bounds,
 		const font& font,
 		const brush& brush,
-		textAlign horizontal,
-		textAlign vertical) {
+		alignment horizontal,
+		alignment vertical) {
 		Gdiplus::StringFormat f;
-		f.SetAlignment((Gdiplus::StringAlignment)(u64)horizontal.getCore());
-		f.SetLineAlignment((Gdiplus::StringAlignment)(u64)vertical.getCore());
+		f.SetAlignment((Gdiplus::StringAlignment)(u64)horizontal);
+		f.SetLineAlignment((Gdiplus::StringAlignment)(u64)vertical);
 		GFX(*this)->DrawString(
 			text, 
 			length, 
@@ -469,7 +443,7 @@ namespace cauldron::gui {
 		auto* ret = new Gdiplus::Font(
 			family,
 			size,
-			(INT)style.getCore(),
+			convert(style),
 			Gdiplus::Unit::UnitPixel);
 		return (paint::font::core_t*)ret;
 	}
@@ -516,6 +490,34 @@ namespace cauldron::gui {
 			bounds.from.y,
 			bounds.to.x - bounds.from.x,
 			bounds.to.y - bounds.from.y);
+	}
+	static Gdiplus::FontStyle convert(paint::font::style style) {
+		Gdiplus::FontStyle ret = Gdiplus::FontStyleRegular;
+
+		if ((style & paint::font::style::bold) == paint::font::style::bold)
+			ret = (Gdiplus::FontStyle)(ret | Gdiplus::FontStyleBold);
+		if ((style & paint::font::style::italic) == paint::font::style::italic)
+			ret = (Gdiplus::FontStyle)(ret | Gdiplus::FontStyleItalic);
+		if ((style & paint::font::style::strikeout) == paint::font::style::strikeout)
+			ret = (Gdiplus::FontStyle)(ret | Gdiplus::FontStyleStrikeout);
+		if ((style & paint::font::style::underline) == paint::font::style::underline)
+			ret = (Gdiplus::FontStyle)(ret | Gdiplus::FontStyleUnderline);
+
+		return ret;
+	}
+	static paint::font::style convert(Gdiplus::FontStyle style) {
+		paint::font::style ret = paint::font::style::normal;
+
+		if ((style & Gdiplus::FontStyleBold) == Gdiplus::FontStyleBold)
+			ret = ret | paint::font::style::bold;
+		if ((style & Gdiplus::FontStyleItalic) == Gdiplus::FontStyleItalic)
+			ret = ret | paint::font::style::italic;
+		if ((style & Gdiplus::FontStyleStrikeout) == Gdiplus::FontStyleStrikeout)
+			ret = ret | paint::font::style::strikeout;
+		if ((style & Gdiplus::FontStyleUnderline) == Gdiplus::FontStyleUnderline)
+			ret = ret | paint::font::style::underline;
+
+		return ret;
 	}
 }
 

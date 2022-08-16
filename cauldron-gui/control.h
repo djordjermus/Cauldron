@@ -13,7 +13,10 @@
 #pragma once
 namespace cauldron::gui {
 
-	// Basic control
+	  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	 // C O N T R O L - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 	class control {
 		friend class ctrlint;
 	public:
@@ -22,77 +25,33 @@ namespace cauldron::gui {
 
 		class core_t;
 
-		class state {
-		public:
-			class core_t;
+		enum class state : u32 {
+			hidden		= 0x00,
+			normal		= 0x01,
+			minimized	= 0x02,
+			maximized	= 0x03,
 
-			static const state hidden;
-			static const state normal;
-			static const state minimized;
-			static const state maximized;
-
-			state(core_t* core);
-			INLINE_CORE_GET(core_t, _core);
-			INLINE_CORE_CMP(state, core_t, _core);
-
-		private:
-			core_t* _core;
 		};
-
-		class style {
-		public:
-			class core_t;
-			enum class option : u64 {
-				none			= 0x00,
-				bordered		= (1ull << 0ull),
-				captioned		= (1ull << 1ull),	// REQUIRES BORDERED
-				resizable		= (1ull << 2ull),	// INCOMPATIBLE WITH CHILD
-				minimize_button	= (1ull << 3ull),	// REQUIRES CAPTIONED
-				maximize_button	= (1ull << 4ull),	// REQUIRES CAPTIONED
-				child			= (1ull << 5ull)	// INCOMPATIBLE WITH RESIZABLE AND BOREDERED
-			};
-
-			style(option options);
-			INLINE_CORE_GET(core_t, _core);
-			INLINE_CORE_CMP(style, core_t, _core);
-
-			option getOptions() const;
-
-		protected:
-			style(core_t* core);
-
-			static option coreToOptions(core_t* core);
-			static core_t* optionsToCore(option options);
-		private:
-			core_t* _core;
+		enum class style : u32 {
+			none			= 0x00,
+			bordered		= (1ull << 0ull),
+			captioned		= (1ull << 1ull),
+			resizable		= (1ull << 2ull),
+			minimize_button	= (1ull << 3ull),
+			maximize_button	= (1ull << 4ull),
+			child			= (1ull << 5ull)
 		};
-
-		class focusStyle {
-		public:
-			class core_t;
-
-			// invalid focus state
-			static const focusStyle invalid;
-			// control accepts focus normally
-			static const focusStyle focusable;
-			// control rejects any attempt to focus on it
-			static const focusStyle unfocusable;
-			// control reject focus and send it to topmost child
-			static const focusStyle defer_to_child;
-
-			focusStyle();
-			INLINE_CORE_GET(core_t, _core);
-			INLINE_CORE_CMP(focusStyle, core_t, _core);
-
-		private:
-			focusStyle(core_t* core);
-			core_t* _core = nullptr;
+		enum class focusStyle : u32 {
+			invalid			= 0x01,
+			focusable		= 0x02,
+			unfocusable		= 0x03,
+			defer_to_child	= 0x04
 		};
 
 		control();
 		~control();
 
-		// OPERATORS
+		// Operators
 
 		// Returns pointer to the core
 		INLINE_CORE_GET(core_t, _core);
@@ -103,7 +62,7 @@ namespace cauldron::gui {
 		virtual void refresh();
 
 		//
-		// GETTERS
+		// Getters
 
 		// True if control is valid(i.e. still open)
 		bool isValid() const;
@@ -123,7 +82,7 @@ namespace cauldron::gui {
 
 		// Returns state of the control - if window is not valid returns state::hidden
 		state getState() const;
-		// Returns state of the control - if window is not valid returns style::option::none
+		// Returns state of the control - if window is not valid returns style::none
 		style getStyle() const;
 		// Returns focus style of the control - if window is not valid returns focusStyle::invalid
 		focusStyle getFocusStyle() const;
@@ -141,23 +100,23 @@ namespace cauldron::gui {
 		bool isDoubleBuffered() const;
 
 		//
-		// SETTERS
+		// Setters
 
 		// Sets the bounds of the control
 		// If surface is nonzero and state is state::hidden, state is updated to state::normal
-		virtual void setBounds(const bounds_t& new_bounds);
+		virtual void setBounds(const bounds_t& bounds);
 		// Sets the caption of the control
-		virtual void setCaption(const std::wstring& new_caption);
+		virtual void setCaption(const std::wstring& caption);
 		// Adopts a child control
 		virtual void adopt(control* adopt);
 		// Disowns the child control
 		virtual void disown(control* disown);
 		// Sets new state
-		virtual void setState(state new_state);
+		virtual void setState(state state);
 		// Sets new style
-		virtual void setStyle(style new_style);
+		virtual void setStyle(style style);
 		// Sets new focus style
-		virtual void setFocusStyle(focusStyle new_focus_style);
+		virtual void setFocusStyle(focusStyle focus_style);
 		// Sets active state
 		virtual void setActive(bool active);
 		// Sets focus state
@@ -170,7 +129,7 @@ namespace cauldron::gui {
 		virtual void setDoubleBuffered(bool double_buffered);
 
 		//
-		// EVENT HANDLER DATA
+		// Event data
 		
 		class closeData : public common::eventData {};
 		class terminateData : public common::eventData {};
@@ -247,7 +206,7 @@ namespace cauldron::gui {
 			void setBounds(const bounds_t& final_bounds);
 			
 		private:
-			bounds_t _bounds;
+			bounds_t& _bounds;
 			edge _sized_edge;
 		};
 
@@ -341,7 +300,7 @@ namespace cauldron::gui {
 
 
 		//
-		// EVENT HANDLERS
+		// Event handlers
 
 		common::observable<void, control&, closeData&>& onClose();
 		common::observable<void, control&, terminateData&>& onTerminate();
@@ -388,7 +347,9 @@ namespace cauldron::gui {
 		static void debugHandler(control& sender, paintData& e);
 		template<class eventData_t>
 		static void refreshOnEvent(control& sender, eventData_t& e) { sender.refresh(); };
-		//static void limitWidth();
+
+		static void limitSizingWidth(sizingData& e, const vector_t& min_max_width);
+		static void limitSizingHeight(sizingData& e, const vector_t& min_max_height);
 	private:
 		core_t* _core =
 			nullptr;
@@ -396,11 +357,10 @@ namespace cauldron::gui {
 			nullptr;
 		std::vector<control*> _children =
 			std::vector<control*>();
-
 		state _state =
 			state::hidden;
 		style _style =
-			style::option::none;
+			style::none;
 
 		focusStyle _focus_style =
 			focusStyle::invalid;
@@ -482,9 +442,9 @@ namespace cauldron::gui {
 		control& operator=(control&& move) = delete;
 	};
 
-	INLINE_BITWISE_OR(control::style::option);
-	INLINE_BITWISE_AND(control::style::option);
-	INLINE_BITWISE_XOR(control::style::option);
+	INLINE_BITWISE_OR(control::style);
+	INLINE_BITWISE_AND(control::style);
+	INLINE_BITWISE_XOR(control::style);
 
 	INLINE_BITWISE_OR(control::sizingData::edge);
 	INLINE_BITWISE_AND(control::sizingData::edge);

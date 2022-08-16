@@ -2,14 +2,19 @@
 #include "cauldron-platform/_include.h"
 #include "cauldron-gui/_include.h"
 #include "demoApp.h"
+#include "matrix.h"
 #include <iostream>
 #include <iomanip>
+#include "cauldron-ecs/_include.h"
+
 using namespace cauldron::common;
 namespace plt = cauldron::platform;
 namespace gui = cauldron::gui;
+namespace ecs = cauldron::ecs;
 
 demoApp app;
 int main() {
+	
 	app.run();
 	return 0;
 }
@@ -17,71 +22,46 @@ int main() {
 void demoApp::run() {
 
 	gui::control::style window_style =
-		gui::control::style::option::bordered |
-		gui::control::style::option::resizable |
-		gui::control::style::option::captioned |
-		gui::control::style::option::minimize_button |
-		gui::control::style::option::maximize_button;
+		gui::control::style::bordered |
+		gui::control::style::resizable |
+		gui::control::style::captioned |
+		gui::control::style::minimize_button |
+		gui::control::style::maximize_button;
 
 	bounds2<i32> window_bounds =
 		gui::control::adjustBoundsForStyle({ {200, 200}, {640, 480} }, window_style);
 
-	theme = std::make_shared<gui::theme>(
-		std::make_shared<gui::paint::solidBrush>(0x141414FF), // NORMAL
-		std::make_shared<gui::paint::solidBrush>(0x141414FF), // DISABLED
-		std::make_shared<gui::paint::solidBrush>(0x141414FF), // HOVER
-		std::make_shared<gui::paint::solidBrush>(0x141414FF), // MOUSE DOWN
-		std::make_shared<gui::paint::solidBrush>(0x141414FF), // FOCUS
-
-		std::make_shared<gui::paint::solidBrush>(0xCCCCCCFF), // NORMAL
-		std::make_shared<gui::paint::solidBrush>(0x777777FF), // DISABLED
-		std::make_shared<gui::paint::solidBrush>(0xFFFFFFFF), // HOVER
-		std::make_shared<gui::paint::solidBrush>(0xDDDDDDFF), // MOUSE DOWN
-		std::make_shared<gui::paint::solidBrush>(0xAACCEEFF), // FOCUS
-
-		std::make_shared<gui::paint::solidBrush>(0xCCCCCCFF - 0x60606000),
-		std::make_shared<gui::paint::solidBrush>(0x777777FF - 0x60606000),
-		std::make_shared<gui::paint::solidBrush>(0xFFFFFFFF - 0x60606000),
-		std::make_shared<gui::paint::solidBrush>(0xDDDDDDFF - 0x60606000),
-		std::make_shared<gui::paint::solidBrush>(0xAACCEEFF - 0x60606000));
-
-	std::shared_ptr<gui::paint::font> font =
-		std::make_shared<gui::paint::font>(L"Consolas", 16.0f);
-
 	parent.setStyle(window_style);
 	parent.setBounds(window_bounds);
+	parent.setState(gui::control::state::normal);
 	parent.setCaption(L"Cauldron a2.0.3");
 	parent.setFocusStyle(gui::control::focusStyle::unfocusable);
 	parent.onPaint().subscribe(
 		callback<void, gui::control&, gui::control::paintData&>::
 		make<demoApp, &demoApp::onPaintWhite>(this));
+	parent.onSizing().subscribe(
+		callback<void, gui::control&, gui::control::sizingData&>::
+		make<demoApp, &demoApp::limitWindowSize>(this));
 	parent.onClose().subscribe(gui::control::terminateOnClose);
-	parent.setDoubleBuffered(true);
-
 
 	parent.adopt(&label);
 	label.setText(L"Hello world from an anchored gui::label");
-	label.setHorizontalAlignment(gui::paint::textAlign::center);
-	label.setVerticalAlignment(gui::paint::textAlign::center);
-	label.setTheme(theme);
-	label.setFont(font);
 	label.setAnchor({ 0.25f, 0.f, 0.75f, 0.f });
-	label.setOffset({ 5, 5, -5, 50 });
+	label.setOffset({ 5, 5, -5, 40 });
 	
 	parent.adopt(&fillbar1);
 	fillbar1.setValue(0.0);
-	fillbar1.setTheme(theme);
-	fillbar1.setAnchor({ 0.f, 0.95f, 0.9f, 0.95f });
-	fillbar1.setOffset({ 2, -18, -2, -2 });
+	fillbar1.setAnchor({ 0.0f, 1.0f, 1.0f, 1.0f });
+	fillbar1.setOffset({ 2, -36, -40, -20 });
+	fillbar1.setPaintAsFocusedWhenFull(false);
 	fillbar1.onScroll().subscribe(
 		callback<void, gui::control&, gui::control::scrollData&>::
 		make<demoApp, &demoApp::onFillbarScroll>(this));
 	
 	parent.adopt(&fillbar2);
 	fillbar2.setValue(0.0);
-	fillbar2.setTheme(theme);
-	fillbar2.setAnchor({ 0.95f, 0.f, 0.95f, 0.9f });
-	fillbar2.setOffset({ -18, 2, -2, -2 });
+	fillbar2.setAnchor({ 1.0f, 0.f, 1.0f, 1.0f });
+	fillbar2.setOffset({ -36, 2, -20, -40 });
 	fillbar2.onScroll().subscribe(
 		callback<void, gui::control&, gui::control::scrollData&>::
 		make<demoApp, &demoApp::onFillbarScroll>(this));
@@ -95,23 +75,18 @@ void demoApp::run() {
 	button1.setFocusStyle(gui::control::focusStyle::focusable);
 	button1.setAnchor({ 0.0f, 0.1f, 0.0f, 0.1f });
 	button1.setOffset({ { 5, 0}, {200, 30 } });
-	button1.setTheme(theme);
 	
 	parent.adopt(&button2);
 	button2.setText(L"button 2");
 	button2.setFocusStyle(gui::control::focusStyle::focusable);
 	button2.setAnchor({ 0.0f, 0.1f, 0.0f, 0.1f });
 	button2.setOffset({ { 5, 40}, {200, 30 } });
-	button2.setTheme(theme);
-	button2.setEnabled(false);
 	
 	for (i32 i = 0; i < 3; i++) {
 		parent.adopt(&checkInput[i]);
 		checkInput[i].setAnchor({ 0.0f, 0.1f, 0.0f, 0.1f });
 		checkInput[i].setOffset({ { 5.0f, 80.0f + 26 * i}, {130.0f, 16.0f } });
 		checkInput[i].setFocusStyle(gui::control::focusStyle::focusable);
-		checkInput[i].setTheme(theme);
-		checkInput[i].setFont(font);
 		checkInput[i].setText(L"check input");
 		checkInput[i].setDoubleBuffered(true);
 	}
@@ -125,8 +100,6 @@ void demoApp::run() {
 		radioInput[i].setAnchor({ 0.0f, 0.1f, 0.0f, 0.1f });
 		radioInput[i].setOffset({ { 5.0f, 80.0f + 26 * (i + 4)}, {130.0f, 16.0f} });
 		radioInput[i].setFocusStyle(gui::control::focusStyle::focusable);
-		radioInput[i].setTheme(theme);
-		radioInput[i].setFont(font);
 		radioInput[i].setText(L"radio input");
 		radioInput[i].setDoubleBuffered(true);
 	}
@@ -138,20 +111,17 @@ void demoApp::run() {
 	picture.setImage(std::make_shared<gui::paint::image>(L"C:\\Users\\Admin\\Desktop\\img.png"));
 	picture.setMode(gui::picture::mode::fit);
 	picture.setBackground(std::make_shared<gui::paint::solidBrush>(0x141414FF));
-
+	
 	parent.adopt(&scrollBar1);
 	scrollBar1.setFocusStyle(gui::control::focusStyle::focusable);
 	scrollBar1.setAnchor({ 1.0f, 0.0f, 1.0f, 1.0f });
 	scrollBar1.setOffset({ -18, 2, -2, -26 });
-	scrollBar1.setTheme(theme);
-
+	
 	parent.adopt(&scrollBar2);
 	scrollBar2.setFocusStyle(gui::control::focusStyle::focusable);
 	scrollBar2.setAnchor({ 0.0f, 1.0f, 1.0f, 1.0f });
 	scrollBar2.setOffset({ 2, -18, -26, -2 });
-	scrollBar2.setTheme(theme);
 
-	parent.setState(gui::control::state::normal);
 	parent.refresh();
 	plt::message m;
 	while (parent.isValid()) {
@@ -187,4 +157,8 @@ void demoApp::fillbarMD(gui::control& sender, gui::fillbar::mouseDownData& e) {
 }
 void demoApp::valueChangedCI(gui::control& sender, gui::checkInput::valueChangedData& e) {
 	std::cout << "VALUE CHANGED: " << e.getNewValue() << "\n";
+}
+void demoApp::limitWindowSize(gui::control& sender, gui::control::sizingData& e) {
+	gui::control::limitSizingWidth(e, { 640, 1280 });
+	gui::control::limitSizingHeight(e, { 480, 720 });
 }

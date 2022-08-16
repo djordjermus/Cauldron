@@ -13,132 +13,11 @@ namespace cauldron::gui {
 	// STATE
 
 	using state = control::state;
-	
-	state::state(core_t* core) :
-		_core(core) {}
+	static int convert(state state);
+	static LONG convert(control::style style);
 
-	const state state::hidden(
-		(core_t*)SW_HIDE);
-	const state state::normal(
-		(core_t*)SW_SHOWNORMAL);
-	const state state::minimized(
-		(core_t*)SW_SHOWMINIMIZED);
-	const state state::maximized(
-		(core_t*)SW_SHOWMAXIMIZED);
-
-
-
-	//
-	// STYLE
-
-	using style = control::style;
-
-	style::style(option options) :
-		_core(optionsToCore(options)) {}
-	style::style(core_t* core) :
-		_core(core) {}
-	style::option style::getOptions() const {
-		return coreToOptions(_core);
-	}
-
-	style::option style::coreToOptions(core_t* core) {
-		style::option acc = option::none;
-		u64 val = (u64)core;
-
-		// BOREDERED
-		if ((val & WS_BORDER) == WS_BORDER) {
-			acc = acc | option::bordered;
-
-			// RESIZABLE
-			if ((val & WS_SIZEBOX) == WS_SIZEBOX)
-				acc = acc | option::resizable;
-
-			// CAPTIONED
-			if ((val & WS_CAPTION) == WS_CAPTION) {
-				acc = acc | option::captioned;
-
-				// MINIMIZE BUTTON
-				if ((val & WS_MINIMIZEBOX) == WS_MINIMIZEBOX)
-					acc = acc | option::minimize_button;
-
-				// MAXIMIZE BUTTON
-				if ((val & WS_MAXIMIZEBOX) == WS_MAXIMIZEBOX)
-					acc = acc | option::maximize_button;
-			}
-		}
-
-		// CHILD
-		else if ((val & WS_CHILD) == WS_CHILD) {
-			acc = acc | option::child;
-		}
-
-		// POPUP / RESIZABLE
-		else if ((val & WS_SIZEBOX) == WS_SIZEBOX) {
-			acc = acc | option::resizable;
-		}
-
-		return acc;
-	}
-	style::core_t* style::optionsToCore(option options) {
-		u64 acc = 0;
-
-		// BORDERED
-		if ((options & option::bordered) == option::bordered) {
-			acc |= WS_BORDER;
-
-			// RESIZABLE
-			if ((options & option::resizable) == option::resizable)
-				acc |= WS_SIZEBOX;
-
-			// CAPTIONED
-			if ((options & option::captioned) == option::captioned) {
-				acc |= WS_CAPTION;
-
-				// MINIMIZE BUTTON
-				if ((options & option::minimize_button) == option::minimize_button)
-					acc |= WS_SYSMENU | WS_MINIMIZEBOX;
-
-				// MAXIMIZE BUTTON
-				if ((options & option::maximize_button) == option::maximize_button)
-					acc |= WS_SYSMENU | WS_MAXIMIZEBOX;
-			}
-		}
-
-		// CHILD WINDOW
-		else if ((options & option::child) == option::child) {
-			acc |= WS_CHILD;
-		}
-
-		// POPUP WINDOW
-		else {
-			acc |= WS_POPUP;
-
-			// RESIZABLE
-			if ((options & option::resizable) == option::resizable)
-				acc |= WS_SIZEBOX;
-		}
-		return (core_t*)acc;
-	}
-
-
-
-	//
-	// FOCUS STYLE
-
-	using focusStyle = control::focusStyle;
-
-	const focusStyle focusStyle::invalid(
-		(core_t*)0x00);
-	const focusStyle focusStyle::focusable(
-		(core_t*)0x01);
-	const focusStyle focusStyle::unfocusable(
-		(core_t*)0x02);
-	const focusStyle focusStyle::defer_to_child(
-		(core_t*)0x03);
-
-	focusStyle::focusStyle() : _core() {}
-	focusStyle::focusStyle(core_t* core) :
-		_core(core) {}
+	static state convertToState(int show_cmd);
+	static control::style convertToStyle(LONG val);
 
 
 
@@ -192,7 +71,6 @@ namespace cauldron::gui {
 			(HWND)_core,
 			GWLP_USERDATA,
 			(LONG_PTR)this);
-
 	}
 	control::~control() {
 		if (isValid())
@@ -272,15 +150,12 @@ namespace cauldron::gui {
 		return read;
 	}
 	state control::getState() const {
-		WINDOWPLACEMENT wp = {};
-		::GetWindowPlacement((HWND)_core, &wp);
-		return state((state::core_t*)wp.showCmd);
+		return _state;
 	}
-	style control::getStyle() const {
-		return style((style::option)
-			::GetWindowLongW((HWND)_core, GWL_STYLE));
+	control::style control::getStyle() const {
+		return convertToStyle(::GetWindowLongW((HWND)_core, GWL_STYLE));
 	}
-	focusStyle control::getFocusStyle() const {
+	control::focusStyle control::getFocusStyle() const {
 		return _focus_style;
 	}
 	bool control::isActive() const {
@@ -312,25 +187,23 @@ namespace cauldron::gui {
 	
 	// SETTERS
 
-	void control::setBounds(const bounds_t& new_bounds) {
+	void control::setBounds(const bounds_t& bounds) {
 		::SetWindowPos(
 			(HWND)_core,
 			nullptr,
-			new_bounds.from.x, 
-			new_bounds.from.y,
-			new_bounds.to.x - new_bounds.from.x,
-			new_bounds.to.y - new_bounds.from.y,
+			bounds.from.x, 
+			bounds.from.y,
+			bounds.to.x - bounds.from.x,
+			bounds.to.y - bounds.from.y,
 			SWP_ASYNCWINDOWPOS | SWP_NOACTIVATE | SWP_NOREPOSITION | SWP_NOZORDER);
-		auto sz = new_bounds.size();
-
-		// Update state 
-		if (_state == state::hidden && sz.x != 0 && sz.y != 0)
-			setState(state::normal);
+		WINDOWPLACEMENT wp = {};
+		::GetWindowPlacement((HWND)_core, &wp);
+		setState(convertToState(wp.showCmd));
 	}
-	void control::setCaption(const std::wstring& new_caption) {
+	void control::setCaption(const std::wstring& caption) {
 		::SetWindowTextW(
 			(HWND)_core,
-			new_caption.c_str());
+			caption.c_str());
 	}
 	void control::adopt(control* adopt) {
 		// Test adopted control
@@ -348,8 +221,8 @@ namespace cauldron::gui {
 		::SetParent((HWND)child->_core, (HWND)this->_core);
 		// APPEND TO NEW PARENT CHILD VECTOR
 		::SetWindowLongW((HWND)child->_core, GWL_EXSTYLE, 0); // CLEAR "WS_EX_LAYERED"
-		child->setStyle(child->getStyle().getOptions() | style::option::child);
-
+		child->setStyle(control::style::child);
+		auto x = child->getStyle();
 		// REMOVE FROM OLD PARENT CHILD VECTOR
 		if (old_parent != nullptr) {
 			for(
@@ -386,12 +259,11 @@ namespace cauldron::gui {
 	void control::disown(control* disown) {
 	}
 
-	void control::setState(state new_state) {
-		WINDOWPLACEMENT wp = {};
-		::GetWindowPlacement((HWND)_core, &wp);
-		::ShowWindowAsync((HWND)_core, (int)new_state.getCore());
+	void control::setState(state state) {
+		::ShowWindowAsync((HWND)_core, convert(state));
+		_state = state;
 	}
-	void control::setStyle(style new_style) {
+	void control::setStyle(style style) {
 		static UINT swp_flags = 
 			SWP_ASYNCWINDOWPOS | 
 			SWP_FRAMECHANGED | 
@@ -404,16 +276,17 @@ namespace cauldron::gui {
 		::SetWindowLongW(
 			(HWND)_core,
 			GWL_STYLE,
-			(LONG)new_style.getCore());
-
+			(LONG)convert(style));
+		_style = style;
+		
 		::SetWindowPos(
 			(HWND)_core,
 			nullptr, 
 			0, 0, 0, 0,
 			swp_flags);
 	}
-	void control::setFocusStyle(focusStyle new_focus_style) {
-		_focus_style = new_focus_style;
+	void control::setFocusStyle(focusStyle focus_style) {
+		_focus_style = focus_style;
 	}
 	void control::setActive(bool active) {
 		if (active)
@@ -435,7 +308,6 @@ namespace cauldron::gui {
 			LWA_ALPHA);
 
 		refresh();
-		
 	}
 	void control::setEnabled(bool enabled) {
 		::EnableWindow((HWND)_core, enabled);
@@ -671,7 +543,7 @@ namespace cauldron::gui {
 		RECT rect = { original.from.x, original.from.y, original.to.x , original.to.y };
 		::AdjustWindowRectEx(
 			&rect,
-			(DWORD)style.getCore(),
+			(DWORD)convert(style),
 			FALSE,
 			0);
 		return bounds_t(rect.left, rect.top, rect.right, rect.bottom);
@@ -681,6 +553,71 @@ namespace cauldron::gui {
 		static paint::pen debug_pen(debug_brush, 2.0f);
 		e.getPaint().drawRect({ {}, sender.getClientSize() }, debug_pen);
 	}
+	void control::limitSizingWidth(sizingData& e, const vector_t& min_max_width) {
+		sizingData::edge edge = e.getSizedEdges();
+		constexpr sizingData::edge left = sizingData::edge::left;
+		constexpr sizingData::edge right = sizingData::edge::right;
+
+		if ((edge & left) == left) {
+			bounds_t bounds = e.getBounds();
+			if (bounds.size().x < min_max_width.x) {
+				bounds.from.x = bounds.to.x - min_max_width.x;
+				e.setBounds(bounds);
+				return;
+			}
+			else if (bounds.size().x > min_max_width.y) {
+				bounds.from.x = bounds.to.x - min_max_width.y;
+				e.setBounds(bounds);
+				return;
+			}
+		}
+		else if ((edge & right) == right) {
+			bounds_t bounds = e.getBounds();
+			if (bounds.size().x < min_max_width.x) {
+				bounds.to.x = bounds.from.x + min_max_width.x;
+				e.setBounds(bounds);
+				return;
+			}
+			else if (bounds.size().x > min_max_width.y) {
+				bounds.to.x = bounds.from.x + min_max_width.y;
+				e.setBounds(bounds);
+				return;
+			}
+		}
+	
+	}
+	void control::limitSizingHeight(sizingData& e, const vector_t& min_max_height) {
+		sizingData::edge edge = e.getSizedEdges();
+		constexpr sizingData::edge top = sizingData::edge::top;
+		constexpr sizingData::edge bottom = sizingData::edge::bottom;
+		if ((edge & top) == top) {
+			bounds_t bounds = e.getBounds();
+			if (bounds.size().y < min_max_height.x) {
+				bounds.from.y = bounds.to.y - min_max_height.x;
+				e.setBounds(bounds);
+				return;
+			}
+			else if (bounds.size().y > min_max_height.y) {
+				bounds.from.y = bounds.to.y - min_max_height.y;
+				e.setBounds(bounds);
+				return;
+			}
+		}
+		else if ((edge & bottom) == bottom) {
+			bounds_t bounds = e.getBounds();
+			if (bounds.size().y < min_max_height.x) {
+				bounds.to.y = bounds.from.y + min_max_height.x;
+				e.setBounds(bounds);
+				return;
+			}
+			else if (bounds.size().y > min_max_height.y) {
+				bounds.to.y = bounds.from.y + min_max_height.y;
+				e.setBounds(bounds);
+				return;
+			}
+		}
+	}
+
 	void control::adjustBackbufferSize() {
 		vector_t size = getClientSize();
 		if (size.x != _backbuffer.getWidth() || size.y != _backbuffer.getHeight())
@@ -906,17 +843,17 @@ namespace cauldron::gui {
 		if (sender == nullptr)
 			return 0;
 
-		focusStyle fs = sender->_focus_style;
-		if (fs == focusStyle::focusable) {
+		control::focusStyle fs = sender->_focus_style;
+		if (fs == control::focusStyle::focusable) {
 			if (sender) {
 				control::gainFocusData e;
 				sender->onGainFocus().notify(*sender, e);
 			}
 		}
-		else if (fs == focusStyle::unfocusable) {
+		else if (fs == control::focusStyle::unfocusable) {
 			::SetFocus(nullptr);
 		}
-		else if (fs == focusStyle::defer_to_child) {
+		else if (fs == control::focusStyle::defer_to_child) {
 			::SetFocus(GetWindow(hwnd, GW_CHILD));
 		}
 
@@ -924,7 +861,7 @@ namespace cauldron::gui {
 	}
 	LRESULT ctrlint::wmLoseFocus(HWND hwnd, UINT msg, WPARAM w, LPARAM l) {
 		control* sender = get(hwnd);
-		if (sender!= nullptr && sender->_focus_style == focusStyle::focusable) {
+		if (sender!= nullptr && sender->_focus_style == control::focusStyle::focusable) {
 			control::loseFocusData e;
 			sender->onLoseFocus().notify(*sender, e);
 		}
@@ -973,8 +910,13 @@ namespace cauldron::gui {
 	LRESULT ctrlint::wmSize(HWND hwnd, UINT msg, WPARAM w, LPARAM l) {
 		control* sender = get(hwnd);
 		if (sender != nullptr) {
+			WINDOWPLACEMENT wp = {};
+			::GetWindowPlacement(hwnd, &wp);
+			sender->_state = convertToState(wp.showCmd);
+
 			control::sizeData e(coordsFromParam(l));
 			sender->onSize().notify(*sender, e);
+
 		}
 		return DefWindowProcW(hwnd, msg, w, l);
 	}
@@ -985,6 +927,7 @@ namespace cauldron::gui {
 			control::bounds_t bounds = control::bounds_t(rect->left, rect->top, rect->right, rect->bottom);
 			control::sizingData e(bounds, edgeFromParam(hwnd, msg, w, l));
 			sender->onSizing().notify(*sender, e);
+
 			rect->left		= bounds.from.x;
 			rect->top		= bounds.from.y;
 			rect->right		= bounds.to.x;
@@ -1113,6 +1056,110 @@ namespace cauldron::gui {
 			}
 		}
 		return DefWindowProcW(hwnd, msg, w, l);
+	}
+
+	static int convert(state state) {
+		switch (state) {
+		case state::hidden:
+			return SW_HIDE;
+		case state::normal:
+			return SW_SHOWNORMAL;
+		case state::minimized:
+			return SW_SHOWMINIMIZED;
+		case state::maximized:
+			return SW_SHOWMAXIMIZED;
+		}
+		return 0;
+	}
+	static LONG convert(control::style style) {
+		u32 acc = 0;
+
+		// BORDERED
+		if ((style & control::style::bordered) == control::style::bordered) {
+			acc |= WS_BORDER;
+
+			// RESIZABLE
+			if ((style & control::style::resizable) == control::style::resizable)
+				acc |= WS_SIZEBOX;
+
+			// CAPTIONED
+			if ((style & control::style::captioned) == control::style::captioned) {
+				acc |= WS_CAPTION;
+
+				// MINIMIZE BUTTON
+				if ((style & control::style::minimize_button) == control::style::minimize_button)
+					acc |= WS_SYSMENU | WS_MINIMIZEBOX;
+
+				// MAXIMIZE BUTTON
+				if ((style & control::style::maximize_button) == control::style::maximize_button)
+					acc |= WS_SYSMENU | WS_MAXIMIZEBOX;
+			}
+		}
+
+		// CHILD WINDOW
+		else if ((style & control::style::child) == control::style::child) {
+			acc |= WS_CHILD;
+		}
+
+		// POPUP WINDOW
+		else {
+			acc |= WS_POPUP;
+
+			// RESIZABLE
+			if ((style & control::style::resizable) == control::style::resizable)
+				acc |= WS_SIZEBOX;
+		}
+		return acc;
+	}
+	static state convertToState(int show_cmd) {
+		switch (show_cmd) {
+		case SW_HIDE:
+			return state::hidden;
+		case SW_SHOWNORMAL:
+			return state::normal;
+		case SW_SHOWMINIMIZED:
+			return state::minimized;
+		case SW_SHOWMAXIMIZED:
+			return state::maximized;
+		}
+		return state::hidden;
+	}
+	static control::style convertToStyle(LONG val) {
+		control::style acc = control::style::none;
+		bool child = (val & WS_CHILD) == WS_CHILD;
+		// BOREDERED
+		if ((val & WS_BORDER) == WS_BORDER) {
+			acc = acc | control::style::bordered;
+
+			// RESIZABLE
+			if ((val & WS_SIZEBOX) == WS_SIZEBOX)
+				acc = acc | control::style::resizable;
+
+			// CAPTIONED
+			if ((val & WS_CAPTION) == WS_CAPTION) {
+				acc = acc | control::style::captioned;
+
+				// MINIMIZE BUTTON
+				if ((val & WS_MINIMIZEBOX) == WS_MINIMIZEBOX)
+					acc = acc | control::style::minimize_button;
+
+				// MAXIMIZE BUTTON
+				if ((val & WS_MAXIMIZEBOX) == WS_MAXIMIZEBOX)
+					acc = acc | control::style::maximize_button;
+			}
+		}
+
+		// CHILD
+		else if ((val & WS_CHILD) == WS_CHILD) {
+			acc = acc | control::style::child;
+		}
+
+		// POPUP / RESIZABLE
+		else if ((val & WS_SIZEBOX) == WS_SIZEBOX) {
+			acc = acc | control::style::resizable;
+		}
+
+		return acc;
 	}
 }
 

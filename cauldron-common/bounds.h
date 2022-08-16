@@ -1,9 +1,15 @@
 #include "vectors.h"
 #pragma once
 namespace cauldron::common {
+
+	  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	 // T E M B L A T E   B O U N D S - - - - - - - - - - - - - - - - - - - - -
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 	template<class T> struct bounds2;
 	template<class T> struct bounds3;
 
+	// 2D bounds structure - two members - from, to of type vector2<T>
 	template<class T> struct bounds2 {
 	public:
 
@@ -62,6 +68,7 @@ namespace cauldron::common {
 		vector2<T> to;
 	};
 
+	// 3D bounds structure - two members - from, to of type vector3<T>
 	template<class T> struct bounds3 {
 	public:
 

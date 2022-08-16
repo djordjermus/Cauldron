@@ -1,11 +1,12 @@
 #include "../fillbar.h"
+#include "../defaults.h"
 namespace cauldron::gui {
 	using namespace cauldron::common;
 
 
 
 	fillbar::fillbar() :
-		anchoredControl() {
+		anchoredControl(), _theme(defaults::getTheme()) {
 
 		onPaint().subscribe(paintFillbar);
 	}

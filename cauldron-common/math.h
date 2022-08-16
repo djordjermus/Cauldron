@@ -1,6 +1,11 @@
 #include "primitives.h"
 #pragma once
 namespace cauldron::common {
+
+	  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	 // M A T H E M A T I C S - - - - - - - - - - - - - - - - - - - - - - - - -
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 	class Math final {
 	public:
 		static constexpr f64 pi = 3.14159265358979323846;

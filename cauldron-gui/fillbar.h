@@ -4,10 +4,18 @@
 #include <memory>
 #pragma once
 namespace cauldron::gui {
+
+	  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	 // F I L L B A R   C O N T R O L - - - - - - - - - - - - - - - - - - - - -
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 	class fillbar : public anchoredControl {
 	public:
 
 		fillbar();
+
+		//
+		// Event data
 
 		class valueChangedData : public common::eventData {
 		public:
@@ -21,23 +29,36 @@ namespace cauldron::gui {
 			f64 _new;
 		};
 
+		//
+		// Getters
+
 		f64 getValue() const;
 		bool isPaintedAsFocusedWhenFull() const;
 		orientation getOrientation() const;
 		std::shared_ptr<theme> getTheme() const;
+
+		//
+		// Setters
 
 		virtual void setValue(f64 value);
 		virtual void setPaintAsFocusedWhenFull(bool enable);
 		virtual void setOrientation(orientation new_orientation);
 		virtual void setTheme(std::shared_ptr<theme> new_theme);
 
+		//
+		// Event handlers
+
 		common::observable<void, control&, valueChangedData&>& onValueChanged();
 
 	private:
+
+		//
+		// Data
+
 		f64 _value =
-			0;
-		std::shared_ptr<theme> _theme =
-			nullptr;
+			0.0f;
+		std::shared_ptr<theme> _theme;
+
 		bool _paint_focused =
 			true;
 		orientation _orientation =

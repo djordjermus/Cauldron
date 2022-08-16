@@ -1,11 +1,17 @@
 #include "../textInput.h"
+#include "../defaults.h"
 #include "cauldron-common/vectors.ostream.h"
 #include <iostream>
 namespace cauldron::gui {
 	using namespace cauldron::common;
 
+
+
 	textInput::textInput() :
-		anchoredControl() {
+		anchoredControl(), 
+		_theme(defaults::getTheme()), 
+		_text_font(defaults::getFont()), 
+		_hint_font(defaults::getHintFont()) {
 	
 		onPaint()		.subscribe(onPaintTextInput);
 		onGainFocus()	.subscribe(refreshOnEvent<gainFocusData&>);
@@ -66,17 +72,6 @@ namespace cauldron::gui {
 		}
 		std::cout << "SELECT: " << _select << '\n';
 		refresh();
-	}
-
-	std::shared_ptr<const paint::font> textInput::getDefaultTextFont() {
-		static std::shared_ptr<paint::font> _default_text_font(
-			std::make_shared<paint::font>(L"consolas", 16.0f, paint::font::style::bold));
-		return _default_text_font;
-	}
-	std::shared_ptr<const paint::font> textInput::getDefaultHintFont() {
-		static std::shared_ptr<paint::font> _default_hint_font(
-			std::make_shared<paint::font>(L"consolas", 16.0f, paint::font::style::italic));
-		return _default_hint_font;
 	}
 
 	void textInput::onPaintTextInput(control& sender, paintData& e) {

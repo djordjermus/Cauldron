@@ -1,6 +1,11 @@
 #include <vector>
 #pragma once
 namespace cauldron::common {
+
+	  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	 // C A L L B A C K - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 	template<class R, class... ArgTs>
 	class callback {
 	public:
@@ -71,39 +76,26 @@ namespace cauldron::common {
 			= nullptr;
 	};
 
-	template<class R, class... ArgTs>
-	class iSubscribable {
-	public:
-		iSubscribable() = default;
-		virtual ~iSubscribable() = default;
+	  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	 // O B S E R V A B L E - - - - - - - - - - - - - - - - - - - - - - - - - -
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-		virtual void subscribe(const callback<R, ArgTs...>& cb) = 0;
-		virtual void unsubscribe(const callback<R, ArgTs...>& cb) = 0;
-	};
-	template<class R, class... ArgTs>
-	class iObservable : public iSubscribable<R, ArgTs...> {
-	public:
-		iObservable() = default;
-		virtual ~iObservable() = default;
-
-		virtual void notify(ArgTs... args) = 0;
-	};
 
 	template<class R, class... ArgTs>
-	class observable : public iObservable<R, ArgTs...> {
+	class observable {
 	public:
 		using callback_t = callback<R, ArgTs...>;
 		observable() :
 			_callbacks() {}
 		virtual ~observable() {}
 
-		void subscribe(const callback_t& cb) override {
+		void subscribe(const callback_t& cb) {
 			_callbacks.emplace_back(cb);
 		}
 		void subscribe(const observable& o) {
 			_callbacks.insert(_callbacks.end(), o._callbacks.begin(), o._callbacks.end());
 		}
-		void unsubscribe(const callback_t& cb) override {
+		void unsubscribe(const callback_t& cb) {
 			for (auto it = _callbacks.begin(), jt = _callbacks.end(); it != jt; it++) {
 				if (*it == cb) {
 					_callbacks.erase(it);
@@ -120,7 +112,7 @@ namespace cauldron::common {
 			for (auto it = o._callbacks.begin(), jt = o._callbacks.end(); it != jt; it++)
 				unsubscribe(*it);
 		}
-		void notify(ArgTs... args) override {
+		void notify(ArgTs... args) {
 			for (unsigned long long i = 0; i < _callbacks.size(); i++)
 				_callbacks[i].invoke(args...);
 		}

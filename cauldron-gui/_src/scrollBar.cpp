@@ -1,4 +1,5 @@
 #include "../scrollBar.h"
+#include "../defaults.h"
 #include "cauldron-common/math.h"
 namespace cauldron::gui {
 	using namespace cauldron::common;
@@ -6,7 +7,7 @@ namespace cauldron::gui {
 
 
 	scrollBar::scrollBar() :
-		anchoredControl() {
+		anchoredControl(), _theme(defaults::getTheme()) {
 		onScroll()		.subscribe(onScrollScrollBar);
 		onMouseDown()	.subscribe(onMouseDownScrollBar);
 		onPaint()		.subscribe(onPaintScrollBar);
@@ -68,6 +69,10 @@ namespace cauldron::gui {
 	}
 	observable<void, control&, scrollBar::valueChangedData&>& scrollBar::onValueChanged() {
 		return _on_value_changed;
+	}
+
+	void scrollBar::relayOnScroll(control& sender, scrollData& e) {
+		setValue(_value - e.getScrollDistance() * _step);
 	}
 
 	void scrollBar::onPaintScrollBar(control& sender, paintData& e) {

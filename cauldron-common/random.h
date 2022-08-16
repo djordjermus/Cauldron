@@ -1,6 +1,12 @@
 #include "primitives.h"
 #pragma once
 namespace cauldron::common {
+
+	  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	 // R A N D O M   N U M B E R   G E N E R A T O R - - - - - - - - - - - - -
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+	// random class used for generating random numbers - contains a seed
 	class random final {
 	public:
 		// Starting seed is initialized to time(0)

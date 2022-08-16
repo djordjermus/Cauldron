@@ -1,12 +1,6 @@
-﻿  main.cpp
-C:\Users\Admin\source\repos\cauldron\demo\main.cpp(176,82): warning C4305: 'argument': truncation from 'double' to 'T'
-          with
-          [
-              T=f32
-          ]
-  Generating code
-  0 of 3306 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+﻿  Generating code
+  2 of 2138 functions (<0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+    2 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   demo.vcxproj -> C:\Users\Admin\source\repos\cauldron\_build\demo.exe

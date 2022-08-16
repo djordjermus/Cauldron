@@ -1,22 +1,5 @@
-﻿  scrollBar.cpp
-C:\Users\Admin\source\repos\Cauldron\cauldron-gui\_src\scrollBar.cpp(103,38): warning C4244: '=': conversion from 'f64' to 'T', possible loss of data
-          with
-          [
-              T=f32
-          ]
-C:\Users\Admin\source\repos\Cauldron\cauldron-gui\_src\scrollBar.cpp(104,37): warning C4244: '=': conversion from 'f64' to 'T', possible loss of data
-          with
-          [
-              T=f32
-          ]
-C:\Users\Admin\source\repos\Cauldron\cauldron-gui\_src\scrollBar.cpp(117,38): warning C4244: '=': conversion from 'f64' to 'T', possible loss of data
-          with
-          [
-              T=f32
-          ]
-C:\Users\Admin\source\repos\Cauldron\cauldron-gui\_src\scrollBar.cpp(118,37): warning C4244: '=': conversion from 'f64' to 'T', possible loss of data
-          with
-          [
-              T=f32
-          ]
+﻿  control.cpp
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\control.cpp(104,26): warning C4267: 'return': conversion from 'size_t' to 'i32', possible loss of data
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\control.cpp(307,12): warning C4244: 'argument': conversion from 'f32' to 'BYTE', possible loss of data
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\control.cpp(958,29): warning C4244: 'argument': conversion from 'WPARAM' to 'wch', possible loss of data
   cauldron-gui.vcxproj -> C:\Users\Admin\source\repos\cauldron\_build\cauldron-gui.lib

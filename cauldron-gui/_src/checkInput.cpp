@@ -1,17 +1,19 @@
 #include "../checkInput.h"
+#include "../defaults.h"
 namespace cauldron::gui {
 	using namespace cauldron::common;
 
 
 
 	checkInput::checkInput() :
-		anchoredControl() {
-		onPaint()		.subscribe(onPaintCheckInput);
+		anchoredControl(), _theme(defaults::getTheme()), _font(defaults::getFont()) {
 		onCursorEnter()	.subscribe(refreshOnEvent<cursorEnterData&>);
 		onCursorLeave()	.subscribe(refreshOnEvent<cursorLeaveData&>);
 		onGainFocus()	.subscribe(refreshOnEvent<gainFocusData&>);
 		onLoseFocus()	.subscribe(refreshOnEvent<loseFocusData&>);
-		onMouseUp()		.subscribe(onMouseUpCheckInput);
+		onKeyUp()		.subscribe(onCheckInputKeyUp);
+		onMouseUp()		.subscribe(onCheckInputMouseUp);
+		onPaint()		.subscribe(onCheckInputPaint);
 	}
 	checkInput::valueChangedData::valueChangedData(bool value) :
 		_value(value) {}
@@ -22,11 +24,17 @@ namespace cauldron::gui {
 	std::shared_ptr<theme> checkInput::getTheme() const {
 		return _theme;
 	}
+	std::shared_ptr<paint::font> checkInput::getFont() const {
+		return _font;
+	}
+	std::wstring checkInput::getText() const {
+		return _text;
+	}
 	bool checkInput::getValue() const {
 		return _value;
 	}
-	observable<void, control&, checkInput::valueChangedData&>& checkInput::onValueChanged() {
-		return _on_value_changed;
+	std::shared_ptr<std::vector<checkInput*>> checkInput::getRadioGroup() const {
+		return _group;
 	}
 
 	void checkInput::setTheme(std::shared_ptr<theme> new_theme) {
@@ -52,6 +60,11 @@ namespace cauldron::gui {
 	void checkInput::setRadioGroup(std::shared_ptr<std::vector<checkInput*>> radio_group) {
 		_group = radio_group;
 	}
+
+	observable<void, control&, checkInput::valueChangedData&>& checkInput::onValueChanged() {
+		return _on_value_changed;
+	}
+
 	void checkInput::normalizeGroup(std::shared_ptr<std::vector<checkInput*>> radio_group, checkInput* set) {
 		for (auto* ci : *radio_group) {
 			if (ci != nullptr && ci != set && ci->_value == true)
@@ -62,7 +75,7 @@ namespace cauldron::gui {
 	}
 
 
-	void checkInput::onPaintCheckInput(control& sender, paintData& e) {
+	void checkInput::onCheckInputPaint(control& sender, paintData& e) {
 		checkInput& ci = static_cast<checkInput&>(sender);
 		if (ci._theme == nullptr)
 			return;
@@ -108,12 +121,12 @@ namespace cauldron::gui {
 				text_bounds,
 				*ci._font,
 				*fg,
-				paint::textAlign::near, 
-				paint::textAlign::center);
+				paint::alignment::near,
+				paint::alignment::center);
 		}
 		
 	}
-	void checkInput::onMouseUpCheckInput(control& sender, mouseUpData& e) {
+	void checkInput::onCheckInputMouseUp(control& sender, mouseUpData& e) {
 		checkInput& ci = static_cast<checkInput&>(sender);
 		if (ci._group == nullptr)
 			ci.setValue(!ci.getValue());
@@ -121,4 +134,15 @@ namespace cauldron::gui {
 			normalizeGroup(ci._group, &ci); // Clear every box except for self
 		
 	}
+	void checkInput::onCheckInputKeyUp(control& sender, keyUpData& e) {
+		if (e.getKey() != key::space)
+			return;
+
+		checkInput& ci = static_cast<checkInput&>(sender);
+		if (ci._group == nullptr)
+			ci.setValue(!ci.getValue());
+		else
+			normalizeGroup(ci._group, &ci); // Clear every box except for self
+	}
+
 }

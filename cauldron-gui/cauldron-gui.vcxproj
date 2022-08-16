@@ -159,6 +159,7 @@
     <ClInclude Include="checkInput.h" />
     <ClInclude Include="anchoredControl.h" />
     <ClInclude Include="control.h" />
+    <ClInclude Include="defaults.h" />
     <ClInclude Include="fillbar.h" />
     <ClInclude Include="group.h" />
     <ClInclude Include="label.h" />
@@ -176,6 +177,7 @@
     <ClCompile Include="_src\checkInput.cpp" />
     <ClCompile Include="_src\anchored.cpp" />
     <ClCompile Include="_src\control.cpp" />
+    <ClCompile Include="_src\defaults.cpp" />
     <ClCompile Include="_src\fillbar.cpp" />
     <ClCompile Include="_src\group.cpp" />
     <ClCompile Include="_src\label.cpp" />

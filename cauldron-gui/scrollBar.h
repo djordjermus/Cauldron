@@ -31,6 +31,7 @@ namespace cauldron::gui {
 		virtual void setTheme(std::shared_ptr<theme> theme);
 
 		common::observable<void, control&, valueChangedData&>& onValueChanged();
+		void relayOnScroll(control& sender, scrollData& e);
 
 	private:
 		f64 _value =
@@ -42,8 +43,7 @@ namespace cauldron::gui {
 
 		orientation _orientation =
 			orientation::automatic;
-		std::shared_ptr<theme> _theme =
-			nullptr;
+		std::shared_ptr<theme> _theme;
 		common::observable<void, control&, valueChangedData&> _on_value_changed =
 			common::observable<void, control&, valueChangedData&>();
 

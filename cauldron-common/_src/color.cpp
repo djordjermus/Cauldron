@@ -11,7 +11,9 @@ namespace cauldron::common {
 #define MODULO(x, y) ((fmodf(fmodf(x, y) + y, y)))
 #define DEG (60.0f / 360.0f)
 
-	// CONSTRUCtoRS
+	  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	 // C O N S T R U C T O R S - - - - - - - - - - - - - - - - - - - - - - - -
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 	rgba8::rgba8() :
 		r(), g(), b(), a() {}
@@ -49,7 +51,10 @@ namespace cauldron::common {
 		b(blue),
 		a(alpha) {}
 
-	// CASTING
+	  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	 // C A S T I N G - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 	rgba8::operator rgb10a2() {
 		return rgb10a2::fromRGBA(
 			r / 255.0f,
@@ -84,8 +89,6 @@ namespace cauldron::common {
 	rgba32::operator rgb10a2() {
 		return rgb10a2::fromRGBA(r, g, b, a);
 	}
-
-	// METHODS
 
 	float4 rgba8::toRGBA() const {
 		return float4(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
@@ -228,8 +231,6 @@ namespace cauldron::common {
 		f32 k = 1 - max;
 		return float4((1 - r - k) / max, (1 - g - k) / max, (1 - b - k) / max, k);
 	}
-
-	// FUNCTIONS
 
 	rgba8 rgba8::fromRGBA(f32 red, f32 green, f32 blue, f32 alpha) {
 		return rgba8(

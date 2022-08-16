@@ -2,6 +2,7 @@
 #include "cauldron-common/bounds.h"
 #include "cauldron-common/color.h"
 #include "cauldron-common/macro.coreManip.h"
+#include "cauldron-common/macro.autoOperator.h"
 #pragma once
 namespace cauldron::gui {
 	class control;
@@ -10,45 +11,23 @@ namespace cauldron::gui {
 	public:
 		class core_t;
 
-		using bounds_t = common::bounds2<f32>;
-		using vector_t = common::vector2<f32>;
-		using color_t = common::rgba8;
+		using bounds_t	= common::bounds2<f32>;
+		using vector_t	= common::vector2<f32>;
+		using color_t	= common::rgba8;
 
-		class textAlign final {
-		public:
-			class core_t;
-			
-			static const textAlign near;
-			static const textAlign center;
-			static const textAlign far;
-
-			INLINE_CORE_GET(core_t, _core);
-			INLINE_CORE_CMP(textAlign, core_t, _core);
-
-		private:
-			textAlign(core_t* core);
-			core_t* _core;
+		enum class alignment : u32 {
+			near	= 0,
+			center	= 1,
+			far		= 2
 		};
 		class font final {
 		public:
-			class style final {
-			public:
-				class core_t;
-
-				static const style normal;
-				static const style bold;
-				static const style italic;
-				static const style strikeout;
-				static const style underline;
-
-				style(core_t* core);
-				~style();
-				
-				INLINE_CORE_GET(core_t, _core);
-				style operator|(style rhs);
-
-			private:
-				core_t* _core;
+			enum class style : u32 {
+				normal		= 0x00,
+				bold		= (1u << 0u),
+				italic		= (1u << 1u),
+				strikeout	= (1u << 2u),
+				underline	= (1u << 3u),
 			};
 			class core_t;
 
@@ -188,15 +167,15 @@ namespace cauldron::gui {
 			i32 length,
 			const bounds_t& bounds,
 			const font& font,
-			textAlign horizontal = textAlign::near,
-			textAlign vertical = textAlign::near);
+			alignment horizontal = alignment::near,
+			alignment vertical = alignment::near);
 		i32 pointToCaretIndex(
 			cwstr text,
 			i32 length,
 			const bounds_t& bounds,
 			const font& font,
-			textAlign horizontal,
-			textAlign vertical,
+			alignment horizontal,
+			alignment vertical,
 			const vector_t& point);
 		void write(
 			cwstr text,
@@ -204,8 +183,8 @@ namespace cauldron::gui {
 			const bounds_t& bounds,
 			const font& font, 
 			const brush& brush,
-			textAlign horizontal = textAlign::near,
-			textAlign vertical = textAlign::near);
+			alignment horizontal = alignment::near,
+			alignment vertical = alignment::near);
 
 		void drawImage(
 			const bounds_t& bounds,
@@ -260,4 +239,8 @@ namespace cauldron::gui {
 		core_t* _core;
 
 	};
+	INLINE_BITWISE_AND(paint::font::style);
+	INLINE_BITWISE_OR(paint::font::style);
+	INLINE_BITWISE_XOR(paint::font::style);
+	INLINE_BITWISE_INVERT(paint::font::style);
 }
