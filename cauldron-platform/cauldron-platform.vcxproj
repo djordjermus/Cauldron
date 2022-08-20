@@ -155,7 +155,6 @@
     <ClInclude Include="task.h" />
     <ClInclude Include="thread.h" />
     <ClInclude Include="_include.h" />
-    <ClInclude Include="display.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="_src\clock.cpp" />

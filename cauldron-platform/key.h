@@ -30,6 +30,17 @@ namespace cauldron {
 		static const key pageDown;
 		static const key end;
 		static const key home;
+		static const key arrowLeft;
+		static const key arrowUp;
+		static const key arrowRight;
+		static const key arrowDown;
+		static const key select;
+		static const key print;
+		static const key execute;
+		static const key printScreen;
+		static const key insert;
+		static const key del;
+		static const key help;
 
 		static const key 
 			an0, an1, an2, an3, an4, an5, an6, an7, an8, an9;

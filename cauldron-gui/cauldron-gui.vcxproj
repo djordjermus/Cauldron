@@ -175,7 +175,7 @@
   <ItemGroup>
     <ClCompile Include="_src\button.cpp" />
     <ClCompile Include="_src\checkInput.cpp" />
-    <ClCompile Include="_src\anchored.cpp" />
+    <ClCompile Include="_src\anchoredControl.cpp" />
     <ClCompile Include="_src\control.cpp" />
     <ClCompile Include="_src\defaults.cpp" />
     <ClCompile Include="_src\fillbar.cpp" />

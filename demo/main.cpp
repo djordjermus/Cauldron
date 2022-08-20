@@ -1,30 +1,29 @@
-#include "cauldron-common/_include.h"
+﻿#include "cauldron-common/_include.h"
 #include "cauldron-platform/_include.h"
 #include "cauldron-gui/_include.h"
 #include "demoApp.h"
-#include "matrix.h"
 #include <iostream>
 #include <iomanip>
-#include "cauldron-ecs/_include.h"
+#include <windows.h>
 
 using namespace cauldron::common;
 namespace plt = cauldron::platform;
 namespace gui = cauldron::gui;
-namespace ecs = cauldron::ecs;
 
 demoApp app;
 int main() {
-	
 	app.run();
 	return 0;
 }
+void terminateOnClick(gui::control& sender, gui::control::mouseUpData& e) {
+	sender.terminate();
+}
 
 void demoApp::run() {
-
 	gui::control::style window_style =
 		gui::control::style::bordered |
-		gui::control::style::resizable |
 		gui::control::style::captioned |
+		gui::control::style::resizable |
 		gui::control::style::minimize_button |
 		gui::control::style::maximize_button;
 
@@ -48,7 +47,9 @@ void demoApp::run() {
 	label.setText(L"Hello world from an anchored gui::label");
 	label.setAnchor({ 0.25f, 0.f, 0.75f, 0.f });
 	label.setOffset({ 5, 5, -5, 40 });
-	
+	label.onMouseUp().subscribe(terminateOnClick);
+	label.setState(gui::control::state::normal);
+
 	parent.adopt(&fillbar1);
 	fillbar1.setValue(0.0);
 	fillbar1.setAnchor({ 0.0f, 1.0f, 1.0f, 1.0f });
@@ -57,7 +58,8 @@ void demoApp::run() {
 	fillbar1.onScroll().subscribe(
 		callback<void, gui::control&, gui::control::scrollData&>::
 		make<demoApp, &demoApp::onFillbarScroll>(this));
-	
+	fillbar1.setState(gui::control::state::normal);
+
 	parent.adopt(&fillbar2);
 	fillbar2.setValue(0.0);
 	fillbar2.setAnchor({ 1.0f, 0.f, 1.0f, 1.0f });
@@ -65,7 +67,8 @@ void demoApp::run() {
 	fillbar2.onScroll().subscribe(
 		callback<void, gui::control&, gui::control::scrollData&>::
 		make<demoApp, &demoApp::onFillbarScroll>(this));
-	
+	fillbar2.setState(gui::control::state::normal);
+
 	button1.onClick().subscribe(
 		callback<void, gui::control&, eventData&>::
 		make<demoApp, &demoApp::clicked>(this));
@@ -75,13 +78,18 @@ void demoApp::run() {
 	button1.setFocusStyle(gui::control::focusStyle::focusable);
 	button1.setAnchor({ 0.0f, 0.1f, 0.0f, 0.1f });
 	button1.setOffset({ { 5, 0}, {200, 30 } });
-	
+	button1.setState(gui::control::state::normal);
+
+	button2.onClick().subscribe(
+		callback<void, gui::control&, eventData&>::
+		make<demoApp, &demoApp::clicked>(this));
 	parent.adopt(&button2);
 	button2.setText(L"button 2");
 	button2.setFocusStyle(gui::control::focusStyle::focusable);
 	button2.setAnchor({ 0.0f, 0.1f, 0.0f, 0.1f });
 	button2.setOffset({ { 5, 40}, {200, 30 } });
-	
+	button2.setState(gui::control::state::normal);
+
 	for (i32 i = 0; i < 3; i++) {
 		parent.adopt(&checkInput[i]);
 		checkInput[i].setAnchor({ 0.0f, 0.1f, 0.0f, 0.1f });
@@ -89,6 +97,7 @@ void demoApp::run() {
 		checkInput[i].setFocusStyle(gui::control::focusStyle::focusable);
 		checkInput[i].setText(L"check input");
 		checkInput[i].setDoubleBuffered(true);
+		checkInput[i].setState(gui::control::state::normal);
 	}
 	std::shared_ptr<std::vector<gui::checkInput*>> radio_group = std::make_shared<std::vector<gui::checkInput*>>();
 	radio_group->push_back(&radioInput[0]);
@@ -102,6 +111,7 @@ void demoApp::run() {
 		radioInput[i].setFocusStyle(gui::control::focusStyle::focusable);
 		radioInput[i].setText(L"radio input");
 		radioInput[i].setDoubleBuffered(true);
+		radioInput[i].setState(gui::control::state::normal);
 	}
 	gui::checkInput::normalizeGroup(radio_group, checkInput);
 	
@@ -111,18 +121,41 @@ void demoApp::run() {
 	picture.setImage(std::make_shared<gui::paint::image>(L"C:\\Users\\Admin\\Desktop\\img.png"));
 	picture.setMode(gui::picture::mode::fit);
 	picture.setBackground(std::make_shared<gui::paint::solidBrush>(0x141414FF));
-	
+	picture.setState(gui::control::state::normal);
+
 	parent.adopt(&scrollBar1);
 	scrollBar1.setFocusStyle(gui::control::focusStyle::focusable);
 	scrollBar1.setAnchor({ 1.0f, 0.0f, 1.0f, 1.0f });
 	scrollBar1.setOffset({ -18, 2, -2, -26 });
-	
+	scrollBar1.setState(gui::control::state::normal);
+
 	parent.adopt(&scrollBar2);
 	scrollBar2.setFocusStyle(gui::control::focusStyle::focusable);
 	scrollBar2.setAnchor({ 0.0f, 1.0f, 1.0f, 1.0f });
 	scrollBar2.setOffset({ 2, -18, -26, -2 });
+	scrollBar2.setState(gui::control::state::normal);
+	
 
-	parent.refresh();
+	std::wstring hints[2] = {
+		L"Име и презиме",
+		L"Број",
+	};
+	void(*validators[2])(gui::control& sender, gui::textInput::validationData&) = {
+		gui::textInput::validateNotDigit,
+		gui::textInput::validateNotLetter};
+
+	for (u64 i = 0; i < 2; i++) {
+		parent.adopt(&textInput[i]);
+		textInput[i].setFocusStyle(gui::control::focusStyle::focusable);
+		textInput[i].setAnchor({ 0.0f, 0.1f, 0.0f, 0.1f });
+		textInput[i].setOffset({ { 5, 300 + 40 * (f32)i}, {500, 30 } });
+		textInput[i].setHint(hints[i]);
+		textInput[i].setSelect({ 0, 0 });
+		textInput[i].setDoubleBuffered(true);
+		textInput[i].setState(gui::control::state::normal);
+		textInput[i].onValidate().subscribe(validators[i]);
+		parent.refresh();
+	}
 	plt::message m;
 	while (parent.isValid()) {
 		m.awaitPull();
@@ -146,7 +179,7 @@ void demoApp::onPaintLabel(gui::control& sender, gui::control::paintData& e) {
 	e.getPaint().fillArc({ {}, sender.getClientSize() }, { 0, Math::tau / 6.0f }, br);
 }
 void demoApp::clicked(gui::control& sender, eventData& e) {
-	std::cout << "CLICKED!\n";
+	std::wcout << "clicked " << static_cast<gui::button&>(sender).getText() << '\n';
 }
 void demoApp::valueChanged(gui::control& sender, gui::fillbar::valueChangedData& e) {
 	std::cout << "VALUE CHANGED: " << e.getNewValue() << '\n';
@@ -159,6 +192,6 @@ void demoApp::valueChangedCI(gui::control& sender, gui::checkInput::valueChanged
 	std::cout << "VALUE CHANGED: " << e.getNewValue() << "\n";
 }
 void demoApp::limitWindowSize(gui::control& sender, gui::control::sizingData& e) {
-	gui::control::limitSizingWidth(e, { 640, 1280 });
+	gui::control::limitSizingWidth(e,  { 640, 1280 });
 	gui::control::limitSizingHeight(e, { 480, 720 });
 }

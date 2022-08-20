@@ -143,9 +143,30 @@ namespace cauldron::gui {
 			return;
 
 		scrollBar& sb		= static_cast<scrollBar&>(sender);
-		vector2<i32> size	= sender.getClientSize();
-		i32 y				= e.getCursorPos().y;
-		f32 val				= (f32)y / size.y;
+		vector2<f32> size	= sender.getClientSize();
+
+		// Calculate scroll bar value
+		f32 click_pos	= 0.0f;
+		f32 min			= 0.0f;
+		f32 max			= 0.0f;
+		if	(sb._orientation == orientation::horizontal ||
+			(sb._orientation == orientation::automatic && (size.x >= size.y))) {
+			click_pos = e.getCursorPos().x;
+			min = size.x * sb._handle_size * 0.5f;
+			max = size.x - size.x * sb._handle_size * 0.5f;
+		}
+		if	(sb._orientation == orientation::vertical ||
+			(sb._orientation == orientation::automatic && (size.y >= size.x))) {
+			click_pos	= e.getCursorPos().y;
+			min			= size.y * sb._handle_size * 0.5f;
+			max			= size.y - size.y * sb._handle_size * 0.5f;
+		}
+		f32 val	= 
+			Math::clamp(
+				Math::remap(click_pos, min, max, 0.0f, 1.0f),
+				0.0f,
+				1.0f);
+
 		sb.setValue(val);
 	}
 }

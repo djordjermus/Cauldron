@@ -271,7 +271,7 @@ namespace cauldron::gui {
 		Gdiplus::RectF rect(point.x, point.y, 2, 2);
 
 		// Compose format
-		Gdiplus::StringFormat f = Gdiplus::StringFormat::GenericDefault();
+		Gdiplus::StringFormat f = Gdiplus::StringFormat::GenericTypographic();
 		f.SetAlignment((Gdiplus::StringAlignment)(u64)horizontal);
 		f.SetLineAlignment((Gdiplus::StringAlignment)(u64)vertical);
 
@@ -308,7 +308,7 @@ namespace cauldron::gui {
 		const brush& brush,
 		alignment horizontal,
 		alignment vertical) {
-		Gdiplus::StringFormat f;
+		Gdiplus::StringFormat f = Gdiplus::StringFormat::GenericTypographic();
 		f.SetAlignment((Gdiplus::StringAlignment)(u64)horizontal);
 		f.SetLineAlignment((Gdiplus::StringAlignment)(u64)vertical);
 		GFX(*this)->DrawString(
@@ -345,8 +345,8 @@ namespace cauldron::gui {
 			makeRect(bounds));
 	}
 	void paint::drawLine(
-		const float2& from,
-		const float2& to,
+		const vector_t& from,
+		const vector_t& to,
 		const pen& pen) {
 		GFX(*this)->DrawLine(
 			PEN(pen),
@@ -355,7 +355,7 @@ namespace cauldron::gui {
 	}
 	void paint::drawArc(
 		const bounds_t& bounds,
-		const float2 angleSweep,
+		const vector_t angleSweep,
 		const pen& pen) {
 		GFX(*this)->DrawArc(
 			PEN(pen),
@@ -364,7 +364,7 @@ namespace cauldron::gui {
 			(angleSweep.y / 3.14159F) * 180.0F);
 	}
 	void paint::drawPoly(
-		const float2* points,
+		const vector_t* points,
 		u64 count,
 		const pen& pen) {
 		GFX(*this)->DrawPolygon(
@@ -373,17 +373,17 @@ namespace cauldron::gui {
 			count);
 	}
 	void paint::drawCurve(
-		const float2* points,
+		const vector_t* points,
 		u64 count,
 		const pen& pen) {
 		GFX(*this)->DrawCurve(PEN(pen), (Gdiplus::PointF*)points, count);
 
 	}
 	void paint::drawBezier(
-		const float2& from,
-		const float2& control1,
-		const float2& control2,
-		const float2& to,
+		const vector_t& from,
+		const vector_t& control1,
+		const vector_t& control2,
+		const vector_t& to,
 		const pen& pen) {
 		GFX(*this)->DrawBezier(
 			PEN(pen),
@@ -408,7 +408,7 @@ namespace cauldron::gui {
 	}
 	void paint::fillArc(
 		const bounds_t& bounds,
-		const float2 angleSweep,
+		const vector_t angleSweep,
 		const brush& brush) {
 		GFX(*this)->FillPie(
 			BRUSH(brush),
@@ -417,7 +417,7 @@ namespace cauldron::gui {
 			(angleSweep.y / 3.14159F) * 180.0F);
 	}
 	void paint::fillPoly(
-		const float2* points,
+		const vector_t* points,
 		u64 count,
 		const brush& brush) {
 		GFX(*this)->FillPolygon(

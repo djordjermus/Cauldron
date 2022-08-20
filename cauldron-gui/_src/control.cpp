@@ -1,9 +1,9 @@
 #if defined(_WIN32) || defined(_WIN64)
 #include "../control.h"
 #include "../paint.h"
+#include "cauldron-common/math.h"
 #include <iostream>
 #include <windows.h>
-
 namespace cauldron::gui {
 	using namespace cauldron::common;
 
@@ -82,6 +82,9 @@ namespace cauldron::gui {
 	// OPERATORS
 
 	void control::terminate() {
+		for (auto* child : _children)
+			child->terminate();
+
 		if(::IsWindow((HWND)_core))
 			::DestroyWindow((HWND)_core);
 	}
@@ -159,28 +162,22 @@ namespace cauldron::gui {
 		return _focus_style;
 	}
 	bool control::isActive() const {
-		return ::GetActiveWindow() == (HWND)_core;
+		return _flags & flag_active;
 	}
 	bool control::isFocused() const {
-		return ::GetFocus() == (HWND)_core;
+		return _flags & flag_focused;
 	}
 	f32 control::getOpacity() const {
-		COLORREF	color_ref	= 0;
-		BYTE		opacity		= 0;
-		DWORD		flag		= 0;
-		if (::GetLayeredWindowAttributes((HWND)_core, &color_ref, &opacity, &flag) != FALSE)
-			return opacity / 255.0f;
-		else
-			return 1.0f;
+		return _opacity;
 	}
 	bool control::isEnabled() const {
-		return _enabled;
+		return _flags & flag_enabled;
 	}
 	bool control::isCursorOver() const {
-		return _cursor_inside;
+		return _flags & flag_hover;
 	}
 	bool control::isDoubleBuffered() const {
-		return _double_buffered;
+		return _flags & flag_double_buffered;
 	}
 
 
@@ -196,9 +193,6 @@ namespace cauldron::gui {
 			bounds.to.x - bounds.from.x,
 			bounds.to.y - bounds.from.y,
 			SWP_ASYNCWINDOWPOS | SWP_NOACTIVATE | SWP_NOREPOSITION | SWP_NOZORDER);
-		WINDOWPLACEMENT wp = {};
-		::GetWindowPlacement((HWND)_core, &wp);
-		setState(convertToState(wp.showCmd));
 	}
 	void control::setCaption(const std::wstring& caption) {
 		::SetWindowTextW(
@@ -214,14 +208,15 @@ namespace cauldron::gui {
 		control* old_parent	= adopt->_parent;
 
 		// SET REFERENCE TO NEW PARENT
+		::SetParent((HWND)child->_core, (HWND)this->_core);
 		child->_parent = this;
 		this->_children.emplace_back(child);
 
-
-		::SetParent((HWND)child->_core, (HWND)this->_core);
 		// APPEND TO NEW PARENT CHILD VECTOR
 		::SetWindowLongW((HWND)child->_core, GWL_EXSTYLE, 0); // CLEAR "WS_EX_LAYERED"
+		child->_opacity = 1.0f;
 		child->setStyle(control::style::child);
+
 		auto x = child->getStyle();
 		// REMOVE FROM OLD PARENT CHILD VECTOR
 		if (old_parent != nullptr) {
@@ -256,12 +251,40 @@ namespace cauldron::gui {
 		if (child != nullptr)
 			child->refresh();
 	}
-	void control::disown(control* disown) {
-	}
-
+	//void control::disown(control* disown) {
+	//	bool contained = false;
+	//	for (auto it = _children.begin(), jt = _children.end(); it != jt; it++) {
+	//		if (*it == disown) {
+	//			contained = true;
+	//			_children.erase(it);
+	//			break;
+	//		}
+	//	}
+	//	::SetParent((HWND)disown->_core, nullptr);
+	//	disown->setStyle(control::style::none);
+	//	disown->_parent = nullptr;
+	//	disown->setBounds({});
+	//	::SetWindowLongW((HWND)disown->_core, GWL_EXSTYLE, WS_EX_LAYERED); // CLEAR "WS_EX_LAYERED"
+	//	::SetLayeredWindowAttributes((HWND)disown->_core, 0, 255, LWA_ALPHA);
+	//	disown->_opacity = 1.0f;
+	//
+	//	// Notify child
+	//	changeParentData cp(disown, this, nullptr);
+	//	disown->_on_change_parent.notify(*disown, cp);
+	//
+	//	// Notify disown
+	//	disownData dd(disown, this, nullptr);
+	//	_on_disown.notify(*this, dd);
+	//	
+	//	// Refresh window
+	//	refresh();
+	//}
+	//
 	void control::setState(state state) {
 		::ShowWindowAsync((HWND)_core, convert(state));
 		_state = state;
+		if(_parent != nullptr)
+			_parent->refresh();
 	}
 	void control::setStyle(style style) {
 		static UINT swp_flags = 
@@ -272,7 +295,7 @@ namespace cauldron::gui {
 			SWP_NOZORDER |
 			SWP_NOMOVE | 
 			SWP_NOSIZE;
-
+	
 		::SetWindowLongW(
 			(HWND)_core,
 			GWL_STYLE,
@@ -301,11 +324,26 @@ namespace cauldron::gui {
 			::SetFocus(nullptr);
 	}
 	void control::setOpacity(f32 opacity) {
+
+		// Clamp value
+		opacity = Math::clamp(opacity, 0.0f, 1.0f);
+		
+		// Set opacity
 		::SetLayeredWindowAttributes(
 			(HWND)_core,
 			0,
 			opacity * 255.0f,
 			LWA_ALPHA);
+
+		// Read opacity
+		COLORREF	out_color_ref	= 0;
+		BYTE		out_opacity		= 0;
+		DWORD		out_flag		= 0;
+
+		if (::GetLayeredWindowAttributes((HWND)_core, &out_color_ref, &out_opacity, &out_flag) != FALSE)
+			_opacity = out_opacity / 255.0f;
+		else
+			_opacity = 1.0f;
 
 		refresh();
 	}
@@ -313,7 +351,10 @@ namespace cauldron::gui {
 		::EnableWindow((HWND)_core, enabled);
 	}
 	void control::setDoubleBuffered(bool double_buffered) {
-		_double_buffered = double_buffered;
+		if(double_buffered)
+			_flags = _flags | flag_double_buffered;
+		else 
+			_flags = _flags & ~flag_double_buffered;
 	}
 
 
@@ -814,6 +855,17 @@ namespace cauldron::gui {
 	LRESULT ctrlint::wmDestroy(HWND hwnd, UINT msg, WPARAM w, LPARAM l) {
 		control* sender = get(hwnd);
 		if (sender) {
+			control* parent = sender->_parent;
+			if (parent) {
+				for (auto it = parent->_children.begin(); it < parent->_children.end(); it++) {
+					if (*it == sender) {
+						parent->_children.erase(it);
+						parent->refresh();
+						break;
+					}
+				}
+			}
+
 			control::terminateData e;
 			sender->onTerminate().notify(*sender, e);
 		}
@@ -828,10 +880,12 @@ namespace cauldron::gui {
 		control* sender = get(hwnd);
 		if (sender) {
 			if (w != 0) {
+				sender->_flags = sender->_flags | control::flag_active;
 				control::activateData e;
 				sender->onActivate().notify(*sender, e);
 			}
 			else {
+				sender->_flags = sender->_flags & ~control::flag_active;
 				control::deactivateData e;
 				sender->onDeactivate().notify(*sender, e);
 			}
@@ -846,6 +900,7 @@ namespace cauldron::gui {
 		control::focusStyle fs = sender->_focus_style;
 		if (fs == control::focusStyle::focusable) {
 			if (sender) {
+				sender->_flags = sender->_flags | control::flag_focused;
 				control::gainFocusData e;
 				sender->onGainFocus().notify(*sender, e);
 			}
@@ -861,16 +916,22 @@ namespace cauldron::gui {
 	}
 	LRESULT ctrlint::wmLoseFocus(HWND hwnd, UINT msg, WPARAM w, LPARAM l) {
 		control* sender = get(hwnd);
-		if (sender!= nullptr && sender->_focus_style == control::focusStyle::focusable) {
-			control::loseFocusData e;
-			sender->onLoseFocus().notify(*sender, e);
+		if (sender != nullptr) {
+			sender->_flags = sender->_flags & ~control::flag_focused;
+			if (sender->_focus_style == control::focusStyle::focusable) {
+				control::loseFocusData e;
+				sender->onLoseFocus().notify(*sender, e);
+			}
 		}
 		return DefWindowProcW(hwnd, msg, w, l);
 	}
 	LRESULT ctrlint::wmEnabled(HWND hwnd, UINT msg, WPARAM w, LPARAM l) {
 		control* sender = get(hwnd);
 		if (sender != nullptr) {
-			sender->_enabled = w == TRUE;
+			if(w == TRUE)
+				sender->_flags = sender->_flags | control::flag_enabled;
+			else
+				sender->_flags = sender->_flags & ~control::flag_enabled;
 
 			if (w == TRUE) {
 				control::enabledData e;
@@ -964,7 +1025,7 @@ namespace cauldron::gui {
 	LRESULT ctrlint::wmCursorMove(HWND hwnd, UINT msg, WPARAM w, LPARAM l) {
 		control* sender = get(hwnd);
 		if (sender != nullptr) {
-			if (sender->_cursor_inside) {
+			if (sender->_flags & control::flag_hover) {
 				control::cursorMoveData e(coordsFromParam(l));
 				sender->onCursorMove().notify(*sender, e);
 			}
@@ -976,7 +1037,7 @@ namespace cauldron::gui {
 					0u
 				};
 				::TrackMouseEvent(&tme);
-				sender->_cursor_inside = true;
+				sender->_flags = sender->_flags | control::flag_hover;
 				control::cursorEnterData e(coordsFromParam(l));
 				sender->onCursorEnter().notify(*sender, e);
 			}
@@ -986,7 +1047,7 @@ namespace cauldron::gui {
 	LRESULT ctrlint::wmCursorLeave(HWND hwnd, UINT msg, WPARAM w, LPARAM l) {
 		control* sender = get(hwnd);
 		if (sender != nullptr) {
-			sender->_cursor_inside = false;
+			sender->_flags = sender->_flags & ~control::flag_hover;
 			control::cursorLeaveData e(coordsFromParam(l));
 			sender->onCursorLeave().notify(*sender, e);
 		}
@@ -1033,7 +1094,7 @@ namespace cauldron::gui {
 		if (sender != nullptr) {
 
 			// Handle double buffered paint
-			if (sender->_double_buffered) {
+			if (sender->_flags & control::flag_double_buffered) {
 
 				// Adjust backbuffer size
 				sender->adjustBackbufferSize();

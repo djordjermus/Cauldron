@@ -19,7 +19,7 @@ private:
 	gui::picture picture;
 	gui::scrollBar scrollBar1;
 	gui::scrollBar scrollBar2;
-	gui::textInput textInput;
+	gui::textInput textInput[2];
 	std::shared_ptr<gui::theme> theme =
 		nullptr;
 	void onPaintWhite(gui::control& sender, gui::control::paintData& e);

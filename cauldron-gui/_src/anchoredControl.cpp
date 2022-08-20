@@ -11,6 +11,9 @@ namespace cauldron::gui {
 		onChangeParent().subscribe(
 			callback<void, control&, changeParentData&>::
 			make<anchoredControl, &anchoredControl::recalcBoundsOnParentChanged>(this));
+		onTerminate().subscribe(
+			callback<void, control&, terminateData&>::
+			make<anchoredControl, &anchoredControl::onTerminateAnchored>(this));
 	}
 
 	bounds2<f32> anchoredControl::getAnchor() const {
@@ -38,11 +41,23 @@ namespace cauldron::gui {
 		_offset.to		= -new_margins.to;
 		recalculateBounds();
 	}
-
+	void anchoredControl::setState(state state) {
+		if (state == state::minimized)
+			return;
+		else control::setState(state);
+	}
+	void anchoredControl::setStyle(style style) {
+		if (style != style::child)
+			return;
+		else control::setStyle(style);
+	}
 	void anchoredControl::setBounds(const bounds2<i32>& new_bounds) {
-		bounds2<i32> frame =
-			bounds2<i32>({ 0, 0 }, getParent()->getClientSize());
-		setOffset(boundsToOffset(frame, _anchor, new_bounds));
+		control* parent = getParent();
+		if (parent) {
+			bounds2<i32> frame =
+				bounds2<i32>({ 0, 0 }, getParent()->getClientSize());
+			setOffset(boundsToOffset(frame, _anchor, new_bounds));
+		}
 	}
 
 	void anchoredControl::recalculateBounds() {
@@ -100,18 +115,19 @@ namespace cauldron::gui {
 			e.getOldParent()->onSize().unsubscribe(
 				callback<void, control&, sizeData&>::
 				make<anchoredControl, &anchoredControl::recalcBoundsOnParentSize>(this));
-			//e.getNewParent()->onSizing().unsubscribe(
-			//	callback<void, control&, sizingData&>::
-			//	make<anchoredControl, &anchoredControl::recalcBoundsOnParentSizing>(this));
 		}
 		if (e.getNewParent() != nullptr) {
 			e.getNewParent()->onSize().subscribe(
 				callback<void, control&, sizeData&>::
 				make<anchoredControl, &anchoredControl::recalcBoundsOnParentSize>(this));
-			//e.getNewParent()->onSizing().subscribe(
-			//	callback<void, control&, sizingData&>::
-			//	make<anchoredControl, &anchoredControl::recalcBoundsOnParentSizing>(this));
 		}
 	}
-
+	void anchoredControl::onTerminateAnchored(control& sender, terminateData& e) {
+		control* parent = sender.getParent();
+		if (parent != nullptr) {
+			parent->onSize().unsubscribe(
+				callback<void, control&, sizeData&>::
+				make<anchoredControl, &anchoredControl::recalcBoundsOnParentSize>(this));
+		}
+	}
 }

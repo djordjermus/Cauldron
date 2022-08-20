@@ -24,6 +24,17 @@ namespace cauldron {
 	const key key::pageDown				((core_t*)0x22);
 	const key key::end					((core_t*)0x23);
 	const key key::home					((core_t*)0x24);
+	const key key::arrowLeft			((core_t*)0x25);
+	const key key::arrowUp				((core_t*)0x26);
+	const key key::arrowRight			((core_t*)0x27);
+	const key key::arrowDown			((core_t*)0x28);
+	const key key::select				((core_t*)0x29);
+	const key key::print				((core_t*)0x2A);
+	const key key::execute				((core_t*)0x2B);
+	const key key::printScreen			((core_t*)0x2C);
+	const key key::insert				((core_t*)0x2D);
+	const key key::del					((core_t*)0x2E);
+	const key key::help					((core_t*)0x2F);
 
 	const key 
 		key::an0((core_t*)0x30), 

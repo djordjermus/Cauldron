@@ -1,5 +1,7 @@
-﻿  control.cpp
-C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\control.cpp(105,26): warning C4267: 'return': conversion from 'size_t' to 'i32', possible loss of data
-C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\control.cpp(309,12): warning C4244: 'argument': conversion from 'f32' to 'BYTE', possible loss of data
-C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\control.cpp(957,29): warning C4244: 'argument': conversion from 'WPARAM' to 'wch', possible loss of data
+﻿  textInput.cpp
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\textInput.cpp(158,20): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\textInput.cpp(166,19): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\textInput.cpp(181,19): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\textInput.cpp(202,20): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\textInput.cpp(223,21): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
   cauldron-gui.vcxproj -> C:\Users\Admin\source\repos\cauldron\_build\cauldron-gui.lib

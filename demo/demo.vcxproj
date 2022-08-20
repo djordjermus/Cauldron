@@ -164,7 +164,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="demoApp.h" />
-    <ClInclude Include="matrix.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

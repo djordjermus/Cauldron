@@ -71,7 +71,7 @@
     <ClCompile Include="_src\checkInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="_src\anchored.cpp">
+    <ClCompile Include="_src\anchoredControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="_src\control.cpp">

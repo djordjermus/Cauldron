@@ -110,7 +110,7 @@ namespace cauldron::gui {
 		// Adopts a child control
 		virtual void adopt(control* adopt);
 		// Disowns the child control
-		virtual void disown(control* disown);
+		//virtual void disown(control* disown);
 		// Sets new state
 		virtual void setState(state state);
 		// Sets new style
@@ -357,23 +357,26 @@ namespace cauldron::gui {
 			nullptr;
 		std::vector<control*> _children =
 			std::vector<control*>();
+
 		state _state =
 			state::hidden;
 		style _style =
 			style::none;
-
 		focusStyle _focus_style =
 			focusStyle::invalid;
 
-		bool _cursor_inside =
-			false;
-		bool _double_buffered =
-			false;
-		bool _enabled =
-			true;
+		f32 _opacity =
+			1.0f;
+		u32 _flags =
+			flag_active | flag_enabled;
+
+		static constexpr u32 flag_enabled			= (1u << 0u);
+		static constexpr u32 flag_hover				= (1u << 1u);
+		static constexpr u32 flag_focused			= (1u << 2u);
+		static constexpr u32 flag_active			= (1u << 3u);
+		static constexpr u32 flag_double_buffered	= (1u << 4u);
 
 		gui::paint::bitmap _backbuffer;
-		void adjustBackbufferSize();
 
 		common::observable<void, control&, closeData&>			_on_close =
 			common::observable<void, control&, closeData&>();
@@ -435,6 +438,8 @@ namespace cauldron::gui {
 
 		common::observable<void, control&, paintData&>			_on_paint =
 			common::observable<void, control&, paintData&>();
+
+		void adjustBackbufferSize();
 
 		control(const control& copy) = delete;
 		control& operator=(const control& copy) = delete;

@@ -90,10 +90,10 @@ namespace cauldron::common {
 		return rgb10a2::fromRGBA(r, g, b, a);
 	}
 
-	float4 rgba8::toRGBA() const {
-		return float4(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
+	v4f32 rgba8::toRGBA() const {
+		return v4f32(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
 	}
-	float4 rgba8::toHSVA() const {
+	v4f32 rgba8::toHSVA() const {
 		f32 r = this->r / 255.0f;
 		f32 g = this->g / 255.0f;
 		f32 b = this->b / 255.0f;
@@ -107,17 +107,17 @@ namespace cauldron::common {
 		f32 s = max == 0 ? 0 : del / max;
 
 		if (del == 0)
-			return float4(0, s, v, a);
+			return v4f32(0, s, v, a);
 		if (max == r)
-			return float4(DEG * MODULO((g - b) / del + 6, 6), s, v, a);
+			return v4f32(DEG * MODULO((g - b) / del + 6, 6), s, v, a);
 		if (max == g)
-			return float4(DEG * ((b - r) / del + 2), s, v, a);
+			return v4f32(DEG * ((b - r) / del + 2), s, v, a);
 		if (max == b)
-			return float4(DEG * ((r - g) / del + 4), s, v, a);
+			return v4f32(DEG * ((r - g) / del + 4), s, v, a);
 
-		return float4();
+		return v4f32();
 	}
-	float4 rgba8::toHSLA() const {
+	v4f32 rgba8::toHSLA() const {
 		f32 r = this->r / 255.0f;
 		f32 g = this->g / 255.0f;
 		f32 b = this->b / 255.0f;
@@ -130,25 +130,25 @@ namespace cauldron::common {
 		f32 l = (max + min) * 0.5f;
 		f32 s = del / (1 - std::fabsf(2 * l - 1));
 
-		if (del == 0) return float4(0, s, l, a);
-		if (max == r) return float4(MODULO((g - b) / del, 6), s, l, a);
-		if (max == g) return float4((b - r) / del + 2, s, l, a);
-		if (max == b) return float4((r - g) / del + 4, s, l, a);
-		return float4();
+		if (del == 0) return v4f32(0, s, l, a);
+		if (max == r) return v4f32(MODULO((g - b) / del, 6), s, l, a);
+		if (max == g) return v4f32((b - r) / del + 2, s, l, a);
+		if (max == b) return v4f32((r - g) / del + 4, s, l, a);
+		return v4f32();
 	}
-	float4 rgba8::toCMYK() const {
+	v4f32 rgba8::toCMYK() const {
 		f32 r = this->r / 255.0f;
 		f32 g = this->g / 255.0f;
 		f32 b = this->b / 255.0f;
 		f32 max = MAX(r, g, b);
 		f32 k = 1 - max;
-		return float4((1 - r - k) / max, (1 - g - k) / max, (1 - b - k) / max, k);
+		return v4f32((1 - r - k) / max, (1 - g - k) / max, (1 - b - k) / max, k);
 	}
 
-	float4 rgb10a2::toRGBA() const {
-		return float4(r / 1023.0f, g / 1023.0f, b / 1023.0f, a / 3.0f);
+	v4f32 rgb10a2::toRGBA() const {
+		return v4f32(r / 1023.0f, g / 1023.0f, b / 1023.0f, a / 3.0f);
 	}
-	float4 rgb10a2::toHSVA() const {
+	v4f32 rgb10a2::toHSVA() const {
 		f32 r = this->r / 1023.0f;
 		f32 g = this->g / 1023.0f;
 		f32 b = this->b / 1023.0f;
@@ -161,13 +161,13 @@ namespace cauldron::common {
 		f32 v = max;
 		f32 s = max == 0 ? 0 : del / (1 - std::fabsf(2 * v - 1));
 
-		if (del == 0) return float4(0, s, v, a);
-		if (max == r) return float4(MODULO((g - b) / del, 6), s, v, a);
-		if (max == g) return float4((b - r) / del + 2, s, v, a);
-		if (max == b) return float4((r - g) / del + 4, s, v, a);
-		return float4();
+		if (del == 0) return v4f32(0, s, v, a);
+		if (max == r) return v4f32(MODULO((g - b) / del, 6), s, v, a);
+		if (max == g) return v4f32((b - r) / del + 2, s, v, a);
+		if (max == b) return v4f32((r - g) / del + 4, s, v, a);
+		return v4f32();
 	}
-	float4 rgb10a2::toHSLA() const {
+	v4f32 rgb10a2::toHSLA() const {
 		f32 r = this->r / 1023.0f;
 		f32 g = this->g / 1023.0f;
 		f32 b = this->b / 1023.0f;
@@ -180,25 +180,25 @@ namespace cauldron::common {
 		f32 l = (max + min) * 0.5f;
 		f32 s = del / (1 - std::fabsf(2 * l - 1));
 
-		if (del == 0) return float4(0, s, l, a);
-		if (max == r) return float4(MODULO((g - b) / del, 6), s, l, a);
-		if (max == g) return float4((b - r) / del + 2, s, l, a);
-		if (max == b) return float4((r - g) / del + 4, s, l, a);
-		return float4();
+		if (del == 0) return v4f32(0, s, l, a);
+		if (max == r) return v4f32(MODULO((g - b) / del, 6), s, l, a);
+		if (max == g) return v4f32((b - r) / del + 2, s, l, a);
+		if (max == b) return v4f32((r - g) / del + 4, s, l, a);
+		return v4f32();
 	}
-	float4 rgb10a2::toCMYK() const {
+	v4f32 rgb10a2::toCMYK() const {
 		f32 r = this->r / 1023.0f;
 		f32 g = this->g / 1023.0f;
 		f32 b = this->b / 1023.0f;
 		f32 max = MAX(r, g, b);
 		f32 k = 1 - max;
-		return float4((1 - r - k) / max, (1 - g - k) / max, (1 - b - k) / max, k);
+		return v4f32((1 - r - k) / max, (1 - g - k) / max, (1 - b - k) / max, k);
 	}
 
-	float4 rgba32::toRGBA() const {
-		return float4(r, g, b, a);
+	v4f32 rgba32::toRGBA() const {
+		return v4f32(r, g, b, a);
 	}
-	float4 rgba32::toHSVA() const {
+	v4f32 rgba32::toHSVA() const {
 		f32 max = MAX(r, g, b);
 		f32 min = MIN(r, g, b);
 		f32 del = max - min;
@@ -206,13 +206,13 @@ namespace cauldron::common {
 		f32 v = max;
 		f32 s = max == 0 ? 0 : del / (1 - std::fabsf(2 * v - 1));
 
-		if (del == 0) return float4(0, s, v, a);
-		if (max == r) return float4(MODULO((g - b) / del, 6), s, v, a);
-		if (max == g) return float4((b - r) / del + 2, s, v, a);
-		if (max == b) return float4((r - g) / del + 4, s, v, a);
-		return float4();
+		if (del == 0) return v4f32(0, s, v, a);
+		if (max == r) return v4f32(MODULO((g - b) / del, 6), s, v, a);
+		if (max == g) return v4f32((b - r) / del + 2, s, v, a);
+		if (max == b) return v4f32((r - g) / del + 4, s, v, a);
+		return v4f32();
 	}
-	float4 rgba32::toHSLA() const {
+	v4f32 rgba32::toHSLA() const {
 		f32 max = MAX(r, g, b);
 		f32 min = MIN(r, g, b);
 		f32 del = max - min;
@@ -220,16 +220,16 @@ namespace cauldron::common {
 		f32 l = (max + min) * 0.5f;
 		f32 s = del / (1 - std::fabsf(2 * l - 1));
 
-		if (del == 0) return float4(0, s, l, a);
-		if (max == r) return float4(MODULO((g - b) / del, 6), s, l, a);
-		if (max == g) return float4((b - r) / del + 2, s, l, a);
-		if (max == b) return float4((r - g) / del + 4, s, l, a);
-		return float4();
+		if (del == 0) return v4f32(0, s, l, a);
+		if (max == r) return v4f32(MODULO((g - b) / del, 6), s, l, a);
+		if (max == g) return v4f32((b - r) / del + 2, s, l, a);
+		if (max == b) return v4f32((r - g) / del + 4, s, l, a);
+		return v4f32();
 	}
-	float4 rgba32::toCMYK() const {
+	v4f32 rgba32::toCMYK() const {
 		f32 max = MAX(r, g, b);
 		f32 k = 1 - max;
-		return float4((1 - r - k) / max, (1 - g - k) / max, (1 - b - k) / max, k);
+		return v4f32((1 - r - k) / max, (1 - g - k) / max, (1 - b - k) / max, k);
 	}
 
 	rgba8 rgba8::fromRGBA(f32 red, f32 green, f32 blue, f32 alpha) {

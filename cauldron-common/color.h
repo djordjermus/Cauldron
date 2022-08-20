@@ -23,10 +23,10 @@ namespace cauldron::common {
 		operator rgb10a2();
 		operator rgba32();
 
-		float4 toRGBA() const;
-		float4 toHSVA() const;
-		float4 toHSLA() const;
-		float4 toCMYK() const;
+		v4f32 toRGBA() const;
+		v4f32 toHSVA() const;
+		v4f32 toHSLA() const;
+		v4f32 toCMYK() const;
 
 		static rgba8 fromRGBA(f32 red, f32 green, f32 blue, f32 alpha);
 		static rgba8 fromHSVA(f32 hue, f32 saturation, f32 value, f32 alpha);
@@ -57,10 +57,10 @@ namespace cauldron::common {
 		operator rgba8();
 		operator rgba32();
 
-		float4 toRGBA() const;
-		float4 toHSVA() const;
-		float4 toHSLA() const;
-		float4 toCMYK() const;
+		v4f32 toRGBA() const;
+		v4f32 toHSVA() const;
+		v4f32 toHSLA() const;
+		v4f32 toCMYK() const;
 
 		static rgb10a2 fromRGBA(f32 red, f32 green, f32 blue, f32 alpha);
 		static rgb10a2 fromHSVA(f32 hue, f32 saturation, f32 value, f32 alpha);
@@ -74,7 +74,6 @@ namespace cauldron::common {
 		u32 b : 10;
 		u32 a : 2;
 	};
-
 	// [rgba] 32 bit f32 channels
 	struct rgba32 final {
 	public:
@@ -90,10 +89,10 @@ namespace cauldron::common {
 		operator rgba8();
 		operator rgb10a2();
 
-		float4 toRGBA() const;
-		float4 toHSVA() const;
-		float4 toHSLA() const;
-		float4 toCMYK() const;
+		v4f32 toRGBA() const;
+		v4f32 toHSVA() const;
+		v4f32 toHSLA() const;
+		v4f32 toCMYK() const;
 
 		static rgba32 fromRGBA(f32 red, f32 green, f32 blue, f32 alpha);
 		static rgba32 fromHSVA(f32 hue, f32 saturation, f32 value, f32 alpha);
