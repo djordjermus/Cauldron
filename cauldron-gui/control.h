@@ -12,35 +12,20 @@
 #include "paint.h"
 #pragma once
 namespace cauldron::gui {
-
+	
 	  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	 // C O N T R O L - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 	class control {
 		friend class ctrlint;
+		friend class group;
 	public:
 		using bounds_t = common::bounds2<i32>;
 		using vector_t = common::vector2<i32>;
 
 		class core_t;
 
-		enum class state : u32 {
-			hidden		= 0x00,
-			normal		= 0x01,
-			minimized	= 0x02,
-			maximized	= 0x03,
-
-		};
-		enum class style : u32 {
-			none			= 0x00,
-			bordered		= (1ull << 0ull),
-			captioned		= (1ull << 1ull),
-			resizable		= (1ull << 2ull),
-			minimize_button	= (1ull << 3ull),
-			maximize_button	= (1ull << 4ull),
-			child			= (1ull << 5ull)
-		};
 		enum class focusStyle : u32 {
 			invalid			= 0x01,
 			focusable		= 0x02,
@@ -75,23 +60,15 @@ namespace cauldron::gui {
 
 		// Returns pointer to the parent control; nullptr if no parent
 		control* getParent() const;
-		// Returns number of children
-		i32 getChildCount() const;
-		// Returns pointer to child under given index; nullptr if index out of bounds
-		control* getChild(u32 index) const;
 
 		// Returns state of the control - if window is not valid returns state::hidden
-		state getState() const;
-		// Returns state of the control - if window is not valid returns style::none
-		style getStyle() const;
+		bool isVisible() const;
 		// Returns focus style of the control - if window is not valid returns focusStyle::invalid
 		focusStyle getFocusStyle() const;
 		// Returns true if control is active - if window is not valid returns false
 		bool isActive() const;
 		// Returns true if control is focused - if window is not valid returns false
 		bool isFocused() const;
-		// Returns the opacity of the control
-		f32 getOpacity() const;
 		// Returns true if enabled
 		bool isEnabled() const;
 		// Returns true if cursor is over this control
@@ -107,22 +84,14 @@ namespace cauldron::gui {
 		virtual void setBounds(const bounds_t& bounds);
 		// Sets the caption of the control
 		virtual void setCaption(const std::wstring& caption);
-		// Adopts a child control
-		virtual void adopt(control* adopt);
-		// Disowns the child control
-		//virtual void disown(control* disown);
-		// Sets new state
-		virtual void setState(state state);
-		// Sets new style
-		virtual void setStyle(style style);
+		// Sets visibility
+		virtual bool setVisible(bool visible = true);
 		// Sets new focus style
 		virtual void setFocusStyle(focusStyle focus_style);
 		// Sets active state
 		virtual void setActive(bool active);
 		// Sets focus state
 		virtual void setFocus(bool focus);
-		// Sets window opacity
-		virtual void setOpacity(f32 opacity);
 		// Sets enabled state
 		virtual void setEnabled(bool enabled);
 		// Sets double buffer usage
@@ -153,14 +122,6 @@ namespace cauldron::gui {
 			control* _child;
 			control* _old_parent;
 			control* _new_parent;
-		};
-		class adoptData : public changeParentData {
-		public:
-			adoptData(control* child, control* old_parent, control* new_parent);
-		};
-		class disownData : public changeParentData {
-		public:
-			disownData(control* child, control* old_parent, control* new_parent);
 		};
 		
 		class moveData : public common::eventData {
@@ -313,8 +274,6 @@ namespace cauldron::gui {
 		common::observable<void, control&, disabledData&>& onDisabled();
 
 		common::observable<void, control&, changeParentData&>& onChangeParent();
-		common::observable<void, control&, adoptData&>& onAdopt();
-		common::observable<void, control&, disownData&>& onDisown();
 
 		common::observable<void, control&, moveData&>& onMove();
 		common::observable<void, control&, movingData&>& onMoving();
@@ -341,9 +300,6 @@ namespace cauldron::gui {
 		// Helper
 
 		static void terminateOnClose(control& sender, closeData& e);
-		static bounds_t adjustBoundsForStyle(
-			const bounds_t& original, 
-			style style);
 		static void debugHandler(control& sender, paintData& e);
 		template<class eventData_t>
 		static void refreshOnEvent(control& sender, eventData_t& e) { sender.refresh(); };
@@ -355,18 +311,12 @@ namespace cauldron::gui {
 			nullptr;
 		control* _parent =
 			nullptr;
-		std::vector<control*> _children =
-			std::vector<control*>();
 
-		state _state =
-			state::hidden;
-		style _style =
-			style::none;
+		bool _visible =
+			false;
 		focusStyle _focus_style =
 			focusStyle::invalid;
 
-		f32 _opacity =
-			1.0f;
 		u32 _flags =
 			flag_active | flag_enabled;
 
@@ -398,10 +348,6 @@ namespace cauldron::gui {
 
 		common::observable<void, control&, changeParentData&>	_on_change_parent =
 			common::observable<void, control&, changeParentData&>();
-		common::observable<void, control&, adoptData&>			_on_adopt =
-			common::observable<void, control&, adoptData&>();
-		common::observable<void, control&, disownData&>			_on_disown =
-			common::observable<void, control&, disownData&>();
 
 		common::observable<void, control&, moveData&>			_on_move =
 			common::observable<void, control&, moveData&>();
@@ -446,10 +392,6 @@ namespace cauldron::gui {
 		control(control&& move) = delete;
 		control& operator=(control&& move) = delete;
 	};
-
-	INLINE_BITWISE_OR(control::style);
-	INLINE_BITWISE_AND(control::style);
-	INLINE_BITWISE_XOR(control::style);
 
 	INLINE_BITWISE_OR(control::sizingData::edge);
 	INLINE_BITWISE_AND(control::sizingData::edge);

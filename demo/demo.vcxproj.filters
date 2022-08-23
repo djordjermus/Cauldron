@@ -20,7 +20,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="demoApp.h">
+    <ClInclude Include="pizzaForm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,6 +3,8 @@
 #include "cauldron-common/color.h"
 #include "cauldron-common/macro.coreManip.h"
 #include "cauldron-common/macro.autoOperator.h"
+#undef near;
+#undef far;
 #pragma once
 namespace cauldron::gui {
 	class control;

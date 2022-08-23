@@ -1,6 +1,8 @@
 c:\users\admin\source\repos\cauldron\_build\cauldron-gui.pdb
 c:\users\admin\source\repos\cauldron\_build\cauldron-gui.idb
 c:\users\admin\source\repos\cauldron\cauldron-gui\x64\debug\theme.obj
+c:\users\admin\source\repos\cauldron\cauldron-gui\x64\debug\textinput.obj
+c:\users\admin\source\repos\cauldron\cauldron-gui\x64\debug\scrollcontrol.obj
 c:\users\admin\source\repos\cauldron\cauldron-gui\x64\debug\scrollbar.obj
 c:\users\admin\source\repos\cauldron\cauldron-gui\x64\debug\picture.obj
 c:\users\admin\source\repos\cauldron\cauldron-gui\x64\debug\paint.obj
@@ -13,7 +15,7 @@ c:\users\admin\source\repos\cauldron\cauldron-gui\x64\debug\control.obj
 c:\users\admin\source\repos\cauldron\cauldron-gui\x64\debug\anchoredcontrol.obj
 c:\users\admin\source\repos\cauldron\cauldron-gui\x64\debug\checkinput.obj
 c:\users\admin\source\repos\cauldron\cauldron-gui\x64\debug\button.obj
-c:\users\admin\source\repos\cauldron\cauldron-gui\x64\debug\textinput.obj
+c:\users\admin\source\repos\cauldron\cauldron-gui\x64\debug\window.obj
 c:\users\admin\source\repos\cauldron\_build\cauldron-gui.lib
 c:\users\admin\source\repos\cauldron\\_build\cauldron-gui.pdb
 c:\users\admin\source\repos\cauldron\cauldron-gui\x64\debug\cauldron-gui.tlog\cl.command.1.tlog

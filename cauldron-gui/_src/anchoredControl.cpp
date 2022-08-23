@@ -41,16 +41,6 @@ namespace cauldron::gui {
 		_offset.to		= -new_margins.to;
 		recalculateBounds();
 	}
-	void anchoredControl::setState(state state) {
-		if (state == state::minimized)
-			return;
-		else control::setState(state);
-	}
-	void anchoredControl::setStyle(style style) {
-		if (style != style::child)
-			return;
-		else control::setStyle(style);
-	}
 	void anchoredControl::setBounds(const bounds2<i32>& new_bounds) {
 		control* parent = getParent();
 		if (parent) {
@@ -61,8 +51,12 @@ namespace cauldron::gui {
 	}
 
 	void anchoredControl::recalculateBounds() {
+		control* parent = getParent();
+		if (parent == nullptr) 
+			return;
+
 		bounds2<i32> frame =
-			bounds2<i32>({0, 0}, getParent()->getClientSize());
+			bounds2<i32>({0, 0}, parent->getClientSize());
 		bounds2<i32> new_bounds = calculateBounds(frame, _anchor, _offset);
 		this->control::setBounds(new_bounds);
 	}

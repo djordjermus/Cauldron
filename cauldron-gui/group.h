@@ -1,16 +1,27 @@
+#pragma once
 #include "anchoredControl.h"
 #include "theme.h"
-#pragma once
 namespace cauldron::gui {
-	class group : public anchoredControl {
+	class group {
 	public:
-		group();
+		group() = default;
+		virtual bool adopt(control& ctrl);
+		
+	private:
+		static bool adopt(group* groupControl, control* child);
+
+		std::vector<control*> _children;
+	};
+	class anchoredGroup : public anchoredControl, public group {
+	public:
+		anchoredGroup();
 
 		std::shared_ptr<theme> getTheme() const;
-		void setTheme(std::shared_ptr<theme> theme);
+
+		virtual bool setTheme(std::shared_ptr<theme> theme);
 
 	private:
 		std::shared_ptr<theme> _theme;
-		static void onPaintGroup(control& sender, paintData& e);
+		static void onPaintAnchoredGroup(control& sender, paintData& e);
 	};
 }

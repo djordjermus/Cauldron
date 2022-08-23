@@ -13,7 +13,9 @@ namespace cauldron::gui {
 		_theme(defaults::getTheme()), 
 		_text_font(defaults::getFont()), 
 		_hint_font(defaults::getHintFont()) {
-	
+
+		setFocusStyle(focusStyle::focusable);
+
 		onPaint()		.subscribe(onPaintTextInput);
 		onGainFocus()	.subscribe(refreshOnEvent<gainFocusData>);
 		onLoseFocus()	.subscribe(onLoseFocusTextInput);
@@ -88,8 +90,8 @@ namespace cauldron::gui {
 		_select = new_select;
 		if (_select.x > (i64)_text.length())
 			_select.x = _text.length();
-		if (_select.x < 0) 
-			_select.x = 0;
+		if (_select.x < -1) 
+			_select.x = -1;
 
 		if (_select.y < 0) 
 			_select.y = 0;
@@ -295,16 +297,18 @@ namespace cauldron::gui {
 							ti._vertical);
 
 					// SELECT
-					bounds2<f32> fill = select_bounds;
-					gfx.fillRect(select_bounds, *fg);
-					gfx.write(
-						ti._text.c_str() + sel_begin,
-						sel_len,
-						select_bounds,
-						*ti._text_font,
-						*bg,
-						ti._horizontal,
-						ti._vertical);
+					if (sel_begin != -1) {
+						bounds2<f32> fill = select_bounds;
+						gfx.fillRect(select_bounds, *fg);
+						gfx.write(
+							ti._text.c_str() + sel_begin,
+							sel_len,
+							select_bounds,
+							*ti._text_font,
+							*bg,
+							ti._horizontal,
+							ti._vertical);
+					}
 
 					// POST SELECT WRITE
 					if(post)
@@ -412,7 +416,7 @@ namespace cauldron::gui {
 		ti.insert(ins);
 	}
 	void textInput::onLoseFocusTextInput(gui::control& sender, gui::control::loseFocusData& e) {
-		static_cast<textInput&>(sender).setSelect({});
+		static_cast<textInput&>(sender).setSelect({-1, 0});
 	}
 
 }

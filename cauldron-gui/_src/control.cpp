@@ -12,13 +12,6 @@ namespace cauldron::gui {
 	//
 	// STATE
 
-	using state = control::state;
-	static int convert(state state);
-	static LONG convert(control::style style);
-
-	static state convertToState(int show_cmd);
-	static control::style convertToStyle(LONG val);
-
 
 
 	//
@@ -82,9 +75,6 @@ namespace cauldron::gui {
 	// OPERATORS
 
 	void control::terminate() {
-		for (auto* child : _children)
-			child->terminate();
-
 		if(::IsWindow((HWND)_core))
 			::DestroyWindow((HWND)_core);
 	}
@@ -102,15 +92,6 @@ namespace cauldron::gui {
 
 	control* control::getParent() const {
 		return _parent;
-	}
-	i32 control::getChildCount() const {
-		return _children.size();
-	}
-	control* control::getChild(u32 index) const {
-		if (index < _children.size())
-			return _children[index];
-		else
-			return nullptr;
 	}
 
 	control::bounds_t control::getBounds() const {
@@ -152,11 +133,8 @@ namespace cauldron::gui {
 		::GetWindowTextW((HWND)_core, read, max_ch);
 		return read;
 	}
-	state control::getState() const {
-		return _state;
-	}
-	control::style control::getStyle() const {
-		return convertToStyle(::GetWindowLongW((HWND)_core, GWL_STYLE));
+	bool control::isVisible() const {
+		return _visible;
 	}
 	control::focusStyle control::getFocusStyle() const {
 		return _focus_style;
@@ -166,9 +144,6 @@ namespace cauldron::gui {
 	}
 	bool control::isFocused() const {
 		return _flags & flag_focused;
-	}
-	f32 control::getOpacity() const {
-		return _opacity;
 	}
 	bool control::isEnabled() const {
 		return _flags & flag_enabled;
@@ -199,58 +174,48 @@ namespace cauldron::gui {
 			(HWND)_core,
 			caption.c_str());
 	}
-	void control::adopt(control* adopt) {
-		// Test adopted control
-		if (adopt == nullptr || !adopt->isValid() || adopt->_parent == this)
-			return;
-
-		control* child		= adopt;
-		control* old_parent	= adopt->_parent;
-
-		// SET REFERENCE TO NEW PARENT
-		::SetParent((HWND)child->_core, (HWND)this->_core);
-		child->_parent = this;
-		this->_children.emplace_back(child);
-
-		// APPEND TO NEW PARENT CHILD VECTOR
-		::SetWindowLongW((HWND)child->_core, GWL_EXSTYLE, 0); // CLEAR "WS_EX_LAYERED"
-		child->_opacity = 1.0f;
-		child->setStyle(control::style::child);
-
-		auto x = child->getStyle();
-		// REMOVE FROM OLD PARENT CHILD VECTOR
-		if (old_parent != nullptr) {
-			for(
-				auto it = old_parent->_children.begin(),
-				jt = old_parent->_children.end();
-				it != jt;
-				it++) {
-					
-				if (*it == child) {
-					old_parent->_children.erase(it);
-					break;
-				}
-			}
-		}
-
-		// NOTIFY CHANGE PARENT
-		changeParentData cpd(child, old_parent, this);
-		child->_on_change_parent.notify(*child, cpd);
-
-		// NOTIFY DISOWN
-		if (old_parent != nullptr && old_parent->isValid()) {
-			disownData dd(child, old_parent, this);
-			old_parent->_on_disown.notify(*old_parent, dd);
-		}
-
-		// NOTIFY ADOPT
-		adoptData ad(child, old_parent, this);
-		this->_on_adopt.notify(*this, ad);
-		
-		// REPAINT
-		if (child != nullptr)
-			child->refresh();
-	}
+	//void control::adopt(control* adopt) {
+	//	// Test adopted control
+	//	if (adopt == nullptr || !adopt->isValid() || adopt->_parent == this)
+	//		return;
+	//
+	//	control* child		= adopt;
+	//	control* old_parent	= adopt->_parent;
+	//
+	//	// SET REFERENCE TO NEW PARENT
+	//	::SetParent((HWND)child->_core, (HWND)this->_core);
+	//	child->_parent = this;
+	//	this->_children.emplace_back(child);
+	//
+	//	// APPEND TO NEW PARENT CHILD VECTOR
+	//	::SetWindowLongW((HWND)child->_core, GWL_EXSTYLE, 0); // CLEAR "WS_EX_LAYERED"
+	//	child->_opacity = 1.0f;
+	//	child->setStyle(control::style::child);
+	//
+	//	auto x = child->getStyle();
+	//	// REMOVE FROM OLD PARENT CHILD VECTOR
+	//	if (old_parent != nullptr) {
+	//		for(
+	//			auto it = old_parent->_children.begin(),
+	//			jt = old_parent->_children.end();
+	//			it != jt;
+	//			it++) {
+	//				
+	//			if (*it == child) {
+	//				old_parent->_children.erase(it);
+	//				break;
+	//			}
+	//		}
+	//	}
+	//
+	//	// NOTIFY CHANGE PARENT
+	//	changeParentData cpd(child, old_parent, this);
+	//	child->_on_change_parent.notify(*child, cpd);
+	//	
+	//	// REPAINT
+	//	if (child != nullptr)
+	//		child->refresh();
+	//}
 	//void control::disown(control* disown) {
 	//	bool contained = false;
 	//	for (auto it = _children.begin(), jt = _children.end(); it != jt; it++) {
@@ -280,34 +245,34 @@ namespace cauldron::gui {
 	//	refresh();
 	//}
 	//
-	void control::setState(state state) {
-		::ShowWindowAsync((HWND)_core, convert(state));
-		_state = state;
+	bool control::setVisible(bool visible) {
+		bool ret = ::ShowWindowAsync((HWND)_core, visible) != FALSE;
 		if(_parent != nullptr)
 			_parent->refresh();
+		return ret;
 	}
-	void control::setStyle(style style) {
-		static UINT swp_flags = 
-			SWP_ASYNCWINDOWPOS | 
-			SWP_FRAMECHANGED | 
-			SWP_NOACTIVATE |
-			SWP_NOREPOSITION | 
-			SWP_NOZORDER |
-			SWP_NOMOVE | 
-			SWP_NOSIZE;
-	
-		::SetWindowLongW(
-			(HWND)_core,
-			GWL_STYLE,
-			(LONG)convert(style));
-		_style = style;
-		
-		::SetWindowPos(
-			(HWND)_core,
-			nullptr, 
-			0, 0, 0, 0,
-			swp_flags);
-	}
+	//void control::setStyle(style style) {
+	//	static UINT swp_flags = 
+	//		SWP_ASYNCWINDOWPOS | 
+	//		SWP_FRAMECHANGED | 
+	//		SWP_NOACTIVATE |
+	//		SWP_NOREPOSITION | 
+	//		SWP_NOZORDER |
+	//		SWP_NOMOVE | 
+	//		SWP_NOSIZE;
+	//
+	//	::SetWindowLongW(
+	//		(HWND)_core,
+	//		GWL_STYLE,
+	//		(LONG)convert(style));
+	//	_style = style;
+	//	
+	//	::SetWindowPos(
+	//		(HWND)_core,
+	//		nullptr, 
+	//		0, 0, 0, 0,
+	//		swp_flags);
+	//}
 	void control::setFocusStyle(focusStyle focus_style) {
 		_focus_style = focus_style;
 	}
@@ -322,30 +287,6 @@ namespace cauldron::gui {
 			::SetFocus((HWND)_core);
 		else if (::GetFocus() == (HWND)_core)
 			::SetFocus(nullptr);
-	}
-	void control::setOpacity(f32 opacity) {
-
-		// Clamp value
-		opacity = Math::clamp(opacity, 0.0f, 1.0f);
-		
-		// Set opacity
-		::SetLayeredWindowAttributes(
-			(HWND)_core,
-			0,
-			opacity * 255.0f,
-			LWA_ALPHA);
-
-		// Read opacity
-		COLORREF	out_color_ref	= 0;
-		BYTE		out_opacity		= 0;
-		DWORD		out_flag		= 0;
-
-		if (::GetLayeredWindowAttributes((HWND)_core, &out_color_ref, &out_opacity, &out_flag) != FALSE)
-			_opacity = out_opacity / 255.0f;
-		else
-			_opacity = 1.0f;
-
-		refresh();
 	}
 	void control::setEnabled(bool enabled) {
 		::EnableWindow((HWND)_core, enabled);
@@ -374,14 +315,6 @@ namespace cauldron::gui {
 	control* changeParentData::getNewParent() const {
 		return _new_parent;
 	}
-
-	using adoptData = control::adoptData;
-	adoptData::adoptData(control* child, control* old_parent, control* new_parent) :
-		changeParentData(child, old_parent, new_parent) {}
-
-	using disownData = control::disownData;
-	disownData::disownData(control* child, control* old_parent, control* new_parent) :
-		changeParentData(child, old_parent, new_parent) {}
 
 	using moveData = control::moveData;
 	moveData::moveData(const vector_t& top_left) :
@@ -520,12 +453,6 @@ namespace cauldron::gui {
 	observable<void, control&, control::changeParentData&>& control::onChangeParent() {
 		return _on_change_parent;
 	}
-	observable<void, control&, control::adoptData&>& control::onAdopt() {
-		return _on_adopt;
-	}
-	observable<void, control&, control::disownData&>& control::onDisown() {
-		return _on_disown;
-	}
 
 	observable<void, control&, control::moveData&>& control::onMove() {
 		return _on_move;
@@ -580,18 +507,10 @@ namespace cauldron::gui {
 	void control::terminateOnClose(control& sender, control::closeData& e) {
 		sender.terminate();
 	}
-	control::bounds_t control::adjustBoundsForStyle(const bounds_t& original, style style) {
-		RECT rect = { original.from.x, original.from.y, original.to.x , original.to.y };
-		::AdjustWindowRectEx(
-			&rect,
-			(DWORD)convert(style),
-			FALSE,
-			0);
-		return bounds_t(rect.left, rect.top, rect.right, rect.bottom);
-	}
 	void control::debugHandler(control& sender, paintData& e) {
 		static paint::solidBrush debug_brush(0xFF00FFFF);
 		static paint::pen debug_pen(debug_brush, 2.0f);
+		auto sz = sender.getClientSize();
 		e.getPaint().drawRect({ {}, sender.getClientSize() }, debug_pen);
 	}
 	void control::limitSizingWidth(sizingData& e, const vector_t& min_max_width) {
@@ -757,14 +676,9 @@ namespace cauldron::gui {
 	}
 	HWND ctrlint::makeHwnd() {
 		HWND ret = ::CreateWindowExW(
-			WS_EX_LAYERED, (LPCWSTR)getAtom(), L"", 0u,
+			0, (LPCWSTR)getAtom(), L"", 0u,
 			0, 0, 0, 0, 
 			nullptr, nullptr, nullptr, nullptr);
-		::SetLayeredWindowAttributes(
-			ret,
-			0,
-			255,
-			LWA_ALPHA);
 		
 		return ret;
 	}
@@ -855,16 +769,6 @@ namespace cauldron::gui {
 	LRESULT ctrlint::wmDestroy(HWND hwnd, UINT msg, WPARAM w, LPARAM l) {
 		control* sender = get(hwnd);
 		if (sender) {
-			control* parent = sender->_parent;
-			if (parent) {
-				for (auto it = parent->_children.begin(); it < parent->_children.end(); it++) {
-					if (*it == sender) {
-						parent->_children.erase(it);
-						parent->refresh();
-						break;
-					}
-				}
-			}
 
 			control::terminateData e;
 			sender->onTerminate().notify(*sender, e);
@@ -973,7 +877,7 @@ namespace cauldron::gui {
 		if (sender != nullptr) {
 			WINDOWPLACEMENT wp = {};
 			::GetWindowPlacement(hwnd, &wp);
-			sender->_state = convertToState(wp.showCmd);
+			sender->_visible = wp.showCmd != 0;
 
 			control::sizeData e(coordsFromParam(l));
 			sender->onSize().notify(*sender, e);
@@ -1117,110 +1021,6 @@ namespace cauldron::gui {
 			}
 		}
 		return DefWindowProcW(hwnd, msg, w, l);
-	}
-
-	static int convert(state state) {
-		switch (state) {
-		case state::hidden:
-			return SW_HIDE;
-		case state::normal:
-			return SW_SHOWNORMAL;
-		case state::minimized:
-			return SW_SHOWMINIMIZED;
-		case state::maximized:
-			return SW_SHOWMAXIMIZED;
-		}
-		return 0;
-	}
-	static LONG convert(control::style style) {
-		u32 acc = 0;
-
-		// BORDERED
-		if ((style & control::style::bordered) == control::style::bordered) {
-			acc |= WS_BORDER;
-
-			// RESIZABLE
-			if ((style & control::style::resizable) == control::style::resizable)
-				acc |= WS_SIZEBOX;
-
-			// CAPTIONED
-			if ((style & control::style::captioned) == control::style::captioned) {
-				acc |= WS_CAPTION;
-
-				// MINIMIZE BUTTON
-				if ((style & control::style::minimize_button) == control::style::minimize_button)
-					acc |= WS_SYSMENU | WS_MINIMIZEBOX;
-
-				// MAXIMIZE BUTTON
-				if ((style & control::style::maximize_button) == control::style::maximize_button)
-					acc |= WS_SYSMENU | WS_MAXIMIZEBOX;
-			}
-		}
-
-		// CHILD WINDOW
-		else if ((style & control::style::child) == control::style::child) {
-			acc |= WS_CHILD;
-		}
-
-		// POPUP WINDOW
-		else {
-			acc |= WS_POPUP;
-
-			// RESIZABLE
-			if ((style & control::style::resizable) == control::style::resizable)
-				acc |= WS_SIZEBOX;
-		}
-		return acc;
-	}
-	static state convertToState(int show_cmd) {
-		switch (show_cmd) {
-		case SW_HIDE:
-			return state::hidden;
-		case SW_SHOWNORMAL:
-			return state::normal;
-		case SW_SHOWMINIMIZED:
-			return state::minimized;
-		case SW_SHOWMAXIMIZED:
-			return state::maximized;
-		}
-		return state::hidden;
-	}
-	static control::style convertToStyle(LONG val) {
-		control::style acc = control::style::none;
-		bool child = (val & WS_CHILD) == WS_CHILD;
-		// BOREDERED
-		if ((val & WS_BORDER) == WS_BORDER) {
-			acc = acc | control::style::bordered;
-
-			// RESIZABLE
-			if ((val & WS_SIZEBOX) == WS_SIZEBOX)
-				acc = acc | control::style::resizable;
-
-			// CAPTIONED
-			if ((val & WS_CAPTION) == WS_CAPTION) {
-				acc = acc | control::style::captioned;
-
-				// MINIMIZE BUTTON
-				if ((val & WS_MINIMIZEBOX) == WS_MINIMIZEBOX)
-					acc = acc | control::style::minimize_button;
-
-				// MAXIMIZE BUTTON
-				if ((val & WS_MAXIMIZEBOX) == WS_MAXIMIZEBOX)
-					acc = acc | control::style::maximize_button;
-			}
-		}
-
-		// CHILD
-		else if ((val & WS_CHILD) == WS_CHILD) {
-			acc = acc | control::style::child;
-		}
-
-		// POPUP / RESIZABLE
-		else if ((val & WS_SIZEBOX) == WS_SIZEBOX) {
-			acc = acc | control::style::resizable;
-		}
-
-		return acc;
 	}
 }
 

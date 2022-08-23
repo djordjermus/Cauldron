@@ -1,7 +1,4 @@
 ﻿  main.cpp
-C:\Users\Admin\source\repos\cauldron\demo\main.cpp(179,82): warning C4305: 'argument': truncation from 'double' to 'T'
-          with
-          [
-              T=f32
-          ]
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(6,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(7,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
   demo.vcxproj -> C:\Users\Admin\source\repos\cauldron\_build\demo.exe

@@ -7,6 +7,9 @@ namespace cauldron::gui {
 
 	checkInput::checkInput() :
 		anchoredControl(), _theme(defaults::getTheme()), _font(defaults::getFont()) {
+
+		setFocusStyle(focusStyle::focusable);
+
 		onCursorEnter()	.subscribe(refreshOnEvent<cursorEnterData&>);
 		onCursorLeave()	.subscribe(refreshOnEvent<cursorLeaveData&>);
 		onGainFocus()	.subscribe(refreshOnEvent<gainFocusData&>);
@@ -113,7 +116,7 @@ namespace cauldron::gui {
 		}
 
 		// Text
-		bounds2<f32> text_bounds = {box_bounds.to.x, box_bounds.from.y, (f32)size.x, (f32)size.y};
+		bounds2<f32> text_bounds = {box_bounds.to.x + 2, box_bounds.from.y, (f32)size.x, (f32)size.y};
 		if (fg != nullptr && ci._font != nullptr && ci._font->isValid()) {
 			gfx.write(
 				ci._text.c_str(),

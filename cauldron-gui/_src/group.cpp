@@ -1,46 +1,52 @@
 #include "../group.h"
 #include "../defaults.h"
+#include <Windows.h>
 namespace cauldron::gui {
-	using namespace cauldron::common;
+	bool group::adopt(control& ctrl) { return adopt(this, &ctrl); }
+	bool group::adopt(group* groupControl, control* child) {
+		control* gr = dynamic_cast<control*>(groupControl);
+		if (gr != nullptr) {
+			if (::SetParent((HWND)child->getCore(), (HWND)gr->getCore()) == FALSE)
+				return false;
 
+			control* old = child->_parent;
+			::SetWindowLongW((HWND)child->getCore(), GWL_STYLE, WS_CHILD);
+			child->_parent = gr;
+			control::changeParentData e(child, old, gr);
+			child->onChangeParent().notify(*child, e);
 
-
-	group::group() :
-		anchoredControl(), _theme(defaults::getTheme()) {
-		setFocusStyle(focusStyle::defer_to_child);
-
-		onPaint()		.subscribe(onPaintGroup);
-		onCursorEnter()	.subscribe(refreshOnEvent<cursorEnterData&>);
-		onCursorLeave()	.subscribe(refreshOnEvent<cursorLeaveData&>);
-		onGainFocus()	.subscribe(refreshOnEvent<gainFocusData&>);
-		onLoseFocus()	.subscribe(refreshOnEvent<loseFocusData&>);
+			return true;
+		}
+		return false;
 	}
 
-	std::shared_ptr<theme> group::getTheme() const {
+	anchoredGroup::anchoredGroup() : 
+		_theme(defaults::getTheme()) {
+		onPaint().subscribe(onPaintAnchoredGroup);
+	}
+	std::shared_ptr<theme> anchoredGroup::getTheme() const {
 		return _theme;
 	}
-	void group::setTheme(std::shared_ptr<theme> theme) {
+	bool anchoredGroup::setTheme(std::shared_ptr<theme> theme) {
 		_theme = theme;
 		refresh();
+		return true;
 	}
-	void group::onPaintGroup(control& sender, paintData& e) {
-		group& gr = static_cast<group&>(sender);
-		if (gr._theme == nullptr)
+	void anchoredGroup::onPaintAnchoredGroup(control& sender, paintData& e) {
+		anchoredGroup& ag = static_cast<anchoredGroup&>(sender);
+		if (ag._theme == nullptr)
 			return;
 
-		paint& gfx = e.getPaint();
-		vector2<f32> size = sender.getClientSize();
-		theme::select select = theme::parse(gr.isEnabled(), false, false, false);
-		
-		std::shared_ptr<const paint::brush> bg = gr._theme->getBackground(select);
-		std::shared_ptr<const paint::brush> ol = gr._theme->getOutline(select);
+		std::shared_ptr<const paint::brush> bg = 
+			ag._theme->getBackground(theme::select::normal);
+		std::shared_ptr<const paint::brush> ol =
+			ag._theme->getOutline(theme::select::normal);
 
-		// BACKGROUND
-		if (bg != nullptr)
-			gfx.fillRect({ {}, size }, *bg);
-
-		// OUTLINE
-		if (ol != nullptr)
-			gfx.drawRect({ {}, size - vector2<f32>(1, 1)}, *ol);
+		auto sz = sender.getClientSize();
+		if (bg != nullptr);
+			e.getPaint().fillRect({ {}, sz }, *bg);
+		if (ol != nullptr) {
+			e.getPaint().drawRect({ {}, sz - common::v2i32(1, 1)}, paint::pen(*ol, 1.0f));
+		}
 	}
 }

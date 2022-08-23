@@ -161,16 +161,17 @@
     <ClInclude Include="control.h" />
     <ClInclude Include="defaults.h" />
     <ClInclude Include="fillbar.h" />
-    <ClInclude Include="group.h" />
     <ClInclude Include="label.h" />
-    <ClInclude Include="listBox.h" />
     <ClInclude Include="orientation.h" />
     <ClInclude Include="paint.h" />
     <ClInclude Include="picture.h" />
     <ClInclude Include="scrollBar.h" />
+    <ClInclude Include="scrollControl.h" />
     <ClInclude Include="textInput.h" />
     <ClInclude Include="theme.h" />
+    <ClInclude Include="window.h" />
     <ClInclude Include="_include.h" />
+    <ClInclude Include="group.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="_src\button.cpp" />
@@ -181,12 +182,13 @@
     <ClCompile Include="_src\fillbar.cpp" />
     <ClCompile Include="_src\group.cpp" />
     <ClCompile Include="_src\label.cpp" />
-    <ClCompile Include="_src\listBox.cpp" />
     <ClCompile Include="_src\paint.cpp" />
     <ClCompile Include="_src\picture.cpp" />
     <ClCompile Include="_src\scrollBar.cpp" />
+    <ClCompile Include="_src\scrollControl.cpp" />
     <ClCompile Include="_src\textInput.cpp" />
     <ClCompile Include="_src\theme.cpp" />
+    <ClCompile Include="_src\window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

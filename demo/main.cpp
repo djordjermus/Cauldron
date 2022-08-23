@@ -1,197 +1,277 @@
 ﻿#include "cauldron-common/_include.h"
 #include "cauldron-platform/_include.h"
 #include "cauldron-gui/_include.h"
-#include "demoApp.h"
-#include <iostream>
-#include <iomanip>
-#include <windows.h>
-
+#include "cauldron-gui/group.h"
+#include "pizzaForm.h"
+#include <locale>
 using namespace cauldron::common;
 namespace plt = cauldron::platform;
 namespace gui = cauldron::gui;
 
-demoApp app;
+pizzaForm app = pizzaForm();
 int main() {
-	app.run();
+	setlocale(LC_CTYPE, "");
+	app.start();
 	return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void terminateOnClick(gui::control& sender, gui::control::mouseUpData& e) {
 	sender.terminate();
 }
+void pizzaForm::start() {
 
-void demoApp::run() {
-	gui::control::style window_style =
-		gui::control::style::bordered |
-		gui::control::style::captioned |
-		gui::control::style::resizable |
-		gui::control::style::minimize_button |
-		gui::control::style::maximize_button;
-
+	//
+	// MAIN WINDOW SETUP
+	gui::window::style window_style =
+		gui::window::style::bordered |
+		gui::window::style::captioned |
+		gui::window::style::resizable |
+		gui::window::style::minimize_button;
 	bounds2<i32> window_bounds =
-		gui::control::adjustBoundsForStyle({ {200, 200}, {640, 480} }, window_style);
-
-	parent.setStyle(window_style);
-	parent.setBounds(window_bounds);
-	parent.setState(gui::control::state::normal);
-	parent.setCaption(L"Cauldron a2.0.3");
-	parent.setFocusStyle(gui::control::focusStyle::unfocusable);
-	parent.onPaint().subscribe(
-		callback<void, gui::control&, gui::control::paintData&>::
-		make<demoApp, &demoApp::onPaintWhite>(this));
-	parent.onSizing().subscribe(
-		callback<void, gui::control&, gui::control::sizingData&>::
-		make<demoApp, &demoApp::limitWindowSize>(this));
-	parent.onClose().subscribe(gui::control::terminateOnClose);
-
-	parent.adopt(&label);
-	label.setText(L"Hello world from an anchored gui::label");
-	label.setAnchor({ 0.25f, 0.f, 0.75f, 0.f });
-	label.setOffset({ 5, 5, -5, 40 });
-	label.onMouseUp().subscribe(terminateOnClick);
-	label.setState(gui::control::state::normal);
-
-	parent.adopt(&fillbar1);
-	fillbar1.setValue(0.0);
-	fillbar1.setAnchor({ 0.0f, 1.0f, 1.0f, 1.0f });
-	fillbar1.setOffset({ 2, -36, -40, -20 });
-	fillbar1.setPaintAsFocusedWhenFull(false);
-	fillbar1.onScroll().subscribe(
-		callback<void, gui::control&, gui::control::scrollData&>::
-		make<demoApp, &demoApp::onFillbarScroll>(this));
-	fillbar1.setState(gui::control::state::normal);
-
-	parent.adopt(&fillbar2);
-	fillbar2.setValue(0.0);
-	fillbar2.setAnchor({ 1.0f, 0.f, 1.0f, 1.0f });
-	fillbar2.setOffset({ -36, 2, -20, -40 });
-	fillbar2.onScroll().subscribe(
-		callback<void, gui::control&, gui::control::scrollData&>::
-		make<demoApp, &demoApp::onFillbarScroll>(this));
-	fillbar2.setState(gui::control::state::normal);
-
-	button1.onClick().subscribe(
-		callback<void, gui::control&, eventData&>::
-		make<demoApp, &demoApp::clicked>(this));
-	parent.adopt(&button1);
-	button1.setText(L"button 1");
-	button1.setDoubleBuffered(true);
-	button1.setFocusStyle(gui::control::focusStyle::focusable);
-	button1.setAnchor({ 0.0f, 0.1f, 0.0f, 0.1f });
-	button1.setOffset({ { 5, 0}, {200, 30 } });
-	button1.setState(gui::control::state::normal);
-
-	button2.onClick().subscribe(
-		callback<void, gui::control&, eventData&>::
-		make<demoApp, &demoApp::clicked>(this));
-	parent.adopt(&button2);
-	button2.setText(L"button 2");
-	button2.setFocusStyle(gui::control::focusStyle::focusable);
-	button2.setAnchor({ 0.0f, 0.1f, 0.0f, 0.1f });
-	button2.setOffset({ { 5, 40}, {200, 30 } });
-	button2.setState(gui::control::state::normal);
-
-	for (i32 i = 0; i < 3; i++) {
-		parent.adopt(&checkInput[i]);
-		checkInput[i].setAnchor({ 0.0f, 0.1f, 0.0f, 0.1f });
-		checkInput[i].setOffset({ { 5.0f, 80.0f + 26 * i}, {130.0f, 16.0f } });
-		checkInput[i].setFocusStyle(gui::control::focusStyle::focusable);
-		checkInput[i].setText(L"check input");
-		checkInput[i].setDoubleBuffered(true);
-		checkInput[i].setState(gui::control::state::normal);
-	}
-	std::shared_ptr<std::vector<gui::checkInput*>> radio_group = std::make_shared<std::vector<gui::checkInput*>>();
-	radio_group->push_back(&radioInput[0]);
-	radio_group->push_back(&radioInput[1]);
-	radio_group->push_back(&radioInput[2]);
-	for (i32 i = 0; i < 3; i++) {
-		parent.adopt(&radioInput[i]);
-		radioInput[i].setRadioGroup(radio_group);
-		radioInput[i].setAnchor({ 0.0f, 0.1f, 0.0f, 0.1f });
-		radioInput[i].setOffset({ { 5.0f, 80.0f + 26 * (i + 4)}, {130.0f, 16.0f} });
-		radioInput[i].setFocusStyle(gui::control::focusStyle::focusable);
-		radioInput[i].setText(L"radio input");
-		radioInput[i].setDoubleBuffered(true);
-		radioInput[i].setState(gui::control::state::normal);
-	}
-	gui::checkInput::normalizeGroup(radio_group, checkInput);
+		{ {200, 200}, {640, 360} };
 	
-	parent.adopt(&picture);
-	picture.setAnchor({ 0.33f, 0.33f, 0.67f, 0.67f });
-	picture.setOffset({ 20, 20, -20, -20});
-	picture.setImage(std::make_shared<gui::paint::image>(L"C:\\Users\\Admin\\Desktop\\img.png"));
-	picture.setMode(gui::picture::mode::fit);
-	picture.setBackground(std::make_shared<gui::paint::solidBrush>(0x141414FF));
-	picture.setState(gui::control::state::normal);
+	onClose().subscribe(
+		gui::control::terminateOnClose);
+	onSizing().subscribe(
+		callback<void, control&, sizingData&>::
+		make<pizzaForm, &pizzaForm::onSizingPizzaForm>(this));
+	onPaint().subscribe(
+		callback<void, control&, paintData&>::
+		make<pizzaForm, &pizzaForm::onPaintPizzaForm>(this));
 
-	parent.adopt(&scrollBar1);
-	scrollBar1.setFocusStyle(gui::control::focusStyle::focusable);
-	scrollBar1.setAnchor({ 1.0f, 0.0f, 1.0f, 1.0f });
-	scrollBar1.setOffset({ -18, 2, -2, -26 });
-	scrollBar1.setState(gui::control::state::normal);
 
-	parent.adopt(&scrollBar2);
-	scrollBar2.setFocusStyle(gui::control::focusStyle::focusable);
-	scrollBar2.setAnchor({ 0.0f, 1.0f, 1.0f, 1.0f });
-	scrollBar2.setOffset({ 2, -18, -26, -2 });
-	scrollBar2.setState(gui::control::state::normal);
+	setStyle(window_style);
+	setBounds(window_bounds);
+	setCaption(L"Pizza online");
+	setFocusStyle(gui::control::focusStyle::unfocusable);
+	setVisible();
+
+	//
+	// TEXT INPUT NAME SETUP
+	adopt(_ti_name);
+	_ti_name.setFocusStyle(gui::control::focusStyle::focusable);
+	_ti_name.setAnchor({0.f, 0.f, 0.5f, 0.f});
+	_ti_name.setOffset({ { 10, 10 }, {-20, 30} });
+	_ti_name.setHint(L"Ime poručioca");
+	_ti_name.onValidate().subscribe(validateName);
+	_ti_name.setSelect({0, 0});
+	_ti_name.setVisible();
+
+	//
+	// TEXT INPUT LASTNAME SETUP
+	adopt(_ti_lastname);
+	_ti_lastname.setAnchor({ 0.5f, 0.f, 1.f, 0.f });
+	_ti_lastname.setOffset({ { 10, 10 }, {-20, 30} });
+	_ti_lastname.setHint(L"Prezime poručioca");
+	_ti_lastname.onValidate().subscribe(validateLastName);
+	_ti_lastname.setVisible();
+
+	//
+	// TYPE RADIO BUTTONS SETUP
+	adopt(_gr_type);
+	_gr_type.setAnchor({ 0, 0, 0.315f, 0 });
+	_gr_type.setOffset({ {10, 50}, {-20, 150} });
+	_gr_type.setVisible();
 	
+	_gr_type.adopt(_lb_type);
+	_lb_type.setAnchor({ 0.f, 0.f, 1.f, 0.f });
+	_lb_type.setOffset({ {1, 1}, {-2, 21} });
+	_lb_type.setText(L"Izaberite tip pice");
+	_lb_type.setVisible();
 
-	std::wstring hints[2] = {
-		L"Име и презиме",
-		L"Број",
-	};
-	void(*validators[2])(gui::control& sender, gui::textInput::validationData&) = {
-		gui::textInput::validateNotDigit,
-		gui::textInput::validateNotLetter};
+	_group_type = std::make_shared<std::vector<gui::checkInput*>>();
+	for (auto& ci : _ci_type)
+		_group_type->push_back(&ci);
+	for (auto& ci : _ci_type)
+		ci.setRadioGroup(_group_type);
 
-	for (u64 i = 0; i < 2; i++) {
-		parent.adopt(&textInput[i]);
-		textInput[i].setFocusStyle(gui::control::focusStyle::focusable);
-		textInput[i].setAnchor({ 0.0f, 0.1f, 0.0f, 0.1f });
-		textInput[i].setOffset({ { 5, 300 + 40 * (f32)i}, {500, 30 } });
-		textInput[i].setHint(hints[i]);
-		textInput[i].setSelect({ 0, 0 });
-		textInput[i].setDoubleBuffered(true);
-		textInput[i].setState(gui::control::state::normal);
-		textInput[i].onValidate().subscribe(validators[i]);
-		parent.refresh();
+	for (i32 i = 0; i < (sizeof(_ci_type) / sizeof(*_ci_type)); i++) {
+		_gr_type.adopt(_ci_type[i]);
+		_ci_type[i].setValue(i == 0);
+		_ci_type[i].setAnchor({ 0, 0, 1, 0 });
+		_ci_type[i].setOffset({ { 10.f, 30.f + i * 30}, { -20.f, 18.f } });
+		_ci_type[i].setText(
+			i == 0 ? L"Vezuvio" :
+			i == 1 ? L"Margarita" :
+			i == 2 ? L"Čikago pica" :
+			i == 3 ? L"New York pica" : L"N/A"
+		);
+		_ci_type[i].setVisible();
 	}
-	plt::message m;
-	while (parent.isValid()) {
-		m.awaitPull();
-		m.dispatch();
+
+	//
+	// SIZE RADIO BUTTONS SETUP
+	adopt(_gr_size);
+	_gr_size.setAnchor({ 0.33f, 0.0f, 0.655f, 0 });
+	_gr_size.setOffset({ {10, 50}, {-20, 150} });
+	_gr_size.setVisible();
+
+	_gr_size.adopt(_lb_size);
+	_lb_size.setAnchor({ 0.f, 0.f, 1.f, 0.f });
+	_lb_size.setOffset({ {1, 1}, {-2, 21} });
+	_lb_size.setText(L"Izaberite veličinu pice");
+	_lb_size.setVisible();
+
+	_group_size = std::make_shared<std::vector<gui::checkInput*>>();
+	for (auto& ci : _ci_size)
+		_group_size->push_back(&ci);
+	for (auto& ci : _ci_size)
+		ci.setRadioGroup(_group_size);
+
+	for (i32 i = 0; i < (sizeof(_ci_size) / sizeof(*_ci_size)); i++) {
+		_gr_size.adopt(_ci_size[i]);
+		_ci_size[i].setValue(i == 0);
+		_ci_size[i].setAnchor({ 0, 0, 1, 0 });
+		_ci_size[i].setOffset({ { 10.f, 30.f + i * 30}, { -20.f, 18.f } });
+		_ci_size[i].setText(
+			i == 0 ? L"24cm - mala" :
+			i == 1 ? L"36cm - srednja" :
+			i == 2 ? L"48cm - velika" : L"N/A"
+		);
+		_ci_size[i].setVisible();
+	}
+
+	//
+	// OPTIONS CHECK INPUT SETUP
+	adopt(_gr_options);
+	_gr_options.setAnchor({ 0.67f, 0.0f, 1.0f, 0 });
+	_gr_options.setOffset({ {10, 50}, {-20, 150} });
+	_gr_options.setVisible();
+
+	_gr_options.adopt(_lb_options);
+	_lb_options.setAnchor({ 0.f, 0.f, 1.f, 0.f });
+	_lb_options.setOffset({ {1, 1}, {-2, 21} });
+	_lb_options.setText(L"Izaberite dodatne opcije");
+	_lb_options.setVisible();
+
+	_group_size = std::make_shared<std::vector<gui::checkInput*>>();
+	for (auto& ci : _ci_size)
+		_group_size->push_back(&ci);
+	for (auto& ci : _ci_size)
+		ci.setRadioGroup(_group_size);
+
+	for (i32 i = 0; i < (sizeof(_ci_options) / sizeof(*_ci_options)); i++) {
+		_gr_options.adopt(_ci_options[i]);
+		_ci_options[i].setValue(i == 0);
+		_ci_options[i].setAnchor({ 0, 0, 1, 0 });
+		_ci_options[i].setOffset({ { 10.f, 30.f + i * 30}, { -20.f, 18.f } });
+		_ci_options[i].setText(
+			i == 0 ? L"dodatne masline" :
+			i == 1 ? L"dadatan sir" :
+			i == 2 ? L"punjena kora" : L"N/A"
+		);
+		_ci_options[i].setVisible();
+	}
+
+	//
+	// TEXT INPUT ADDRESS SETUP
+	adopt(_ti_address);
+	_ti_address.setAnchor({ 0.0f, 0.f, 1.f, 0.f });
+	_ti_address.setOffset({ { 10, 210 }, {-20, 30} });
+	_ti_address.setHint(L"Adresa poručioca");
+	_ti_address.setVisible();
+
+	// SUBMIT BUTTON SETUP
+	adopt(_btn_submit);
+	_btn_submit.setAnchor({ 0, 1, 1, 1 });
+	_btn_submit.setOffset({ {10, -50}, { -20, 40} });
+	_btn_submit.setText(L"Naruči");
+	_btn_submit.onClick().subscribe(
+		callback<void, control&, eventData&>::
+		make<pizzaForm, &pizzaForm::onSubmit>(this));
+	_btn_submit.setVisible();
+
+
+	// Pump
+	plt::message msg;
+	while (isValid()) {
+		msg.awaitPull();
+		msg.dispatch();
 	}
 }
 
-void demoApp::onPaintWhite(gui::control& sender, gui::control::paintData& e) {
-	static gui::paint::solidBrush sb(0x141414FF);
-	e.getPaint().fillRect({ {}, sender.getClientSize() }, sb);
+#include "cauldron-gui/defaults.h"
+void pizzaForm::onPaintPizzaForm(control& sender, paintData& e) {
+	auto br = gui::defaults::getTheme()->getBackground(gui::theme::select::normal);
+	auto sz = sender.getClientSize();
+	if (br != nullptr)
+		e.getPaint().fillRect({ {}, sz }, *br);
+
 }
-void demoApp::setBoundsOnMouseUp(gui::control& sender, gui::control::mouseUpData& e) {
-	sender.setBounds({ 200, 200, 500, 500 });
+void pizzaForm::onSizingPizzaForm(control& sender, sizingData& e) {
+	gui::control::limitSizingWidth(e, { 640, 999999999 });
+	gui::control::limitSizingHeight(e, { 360, 999999999 });
 }
-void demoApp::onFillbarScroll(gui::control& sender, gui::control::scrollData& e) {
-	gui::fillbar& fb = static_cast<gui::fillbar&>(sender);
-	fb.setValue(fb.getValue() + e.getScrollDistance() * 0.02);
+
+void pizzaForm::validateName(control& sender, gui::textInput::validationData& e) {
+	gui::textInput::validateNotDigit(sender, e);
+	gui::textInput::validateNotWhitespace(sender, e);
 }
-void demoApp::onPaintLabel(gui::control& sender, gui::control::paintData& e) {
-	static gui::paint::solidBrush br(0xFF00FFFF);
-	e.getPaint().fillArc({ {}, sender.getClientSize() }, { 0, Math::tau / 6.0f }, br);
+void pizzaForm::validateLastName(control& sender, gui::textInput::validationData& e) {
+	gui::textInput::validateNotDigit(sender, e);
+	gui::textInput::validateNotWhitespace(sender, e);
 }
-void demoApp::clicked(gui::control& sender, eventData& e) {
-	std::wcout << "clicked " << static_cast<gui::button&>(sender).getText() << '\n';
-}
-void demoApp::valueChanged(gui::control& sender, gui::fillbar::valueChangedData& e) {
-	std::cout << "VALUE CHANGED: " << e.getNewValue() << '\n';
-}
-void demoApp::fillbarMD(gui::control& sender, gui::fillbar::mouseDownData& e) {
-	gui::fillbar& fb = static_cast<gui::fillbar&>(sender);
-	fb.setPaintAsFocusedWhenFull(!fb.isPaintedAsFocusedWhenFull());
-}
-void demoApp::valueChangedCI(gui::control& sender, gui::checkInput::valueChangedData& e) {
-	std::cout << "VALUE CHANGED: " << e.getNewValue() << "\n";
-}
-void demoApp::limitWindowSize(gui::control& sender, gui::control::sizingData& e) {
-	gui::control::limitSizingWidth(e,  { 640, 1280 });
-	gui::control::limitSizingHeight(e, { 480, 720 });
+
+#include <io.h>
+#include <stdio.h>
+#include <fcntl.h>
+void pizzaForm::onSubmit(control& sender, eventData& e) {
+	FILE* out = nullptr;
+	_wfopen_s(&out, L"zapisnik.txt", L"a");
+	if (out == nullptr)
+		return;
+	auto ret = _setmode(_fileno(out), _O_WTEXT);
+	fwprintf(
+		out, 
+		L"Narudzbina:\n\tIME: %ls\n\tPREZIME: %ls\n\tADRESA: %ls\n\t", 
+		_ti_name.getText().c_str(),
+		_ti_lastname.getText().c_str(),
+		_ti_address.getText().c_str());
+
+	gui::checkInput* pizza_type = nullptr;
+	for (auto& p : _ci_type) {
+		if (p.getValue()) {
+			pizza_type = &p;
+			break;
+		}
+	}
+	if (pizza_type != nullptr)
+		fwprintf(out, L"TYPE: %ls\n\t", pizza_type->getText().c_str());
+
+	gui::checkInput* pizza_size = nullptr;
+	for (auto& p : _ci_size) {
+		if (p.getValue()) {
+			pizza_size = &p;
+			break;
+		}
+	}
+	if (pizza_size != nullptr)
+		fwprintf(out, L"SIZE: %ls\n\t", pizza_size->getText().c_str());
+
+	if (pizza_size != nullptr)
+		fwprintf(out, L"OPT: ");
+	for (auto& p : _ci_options) {
+		if (p.getValue()) 
+			fwprintf(out, L"%ls, ", p.getText().c_str());
+	}
+	fwprintf(out, L"\n");
+	fclose(out);
 }

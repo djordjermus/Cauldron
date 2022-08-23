@@ -10,6 +10,8 @@ namespace cauldron::gui {
 	button::button() :
 		anchoredControl(), _font(defaults::getFont()), _theme(defaults::getTheme()) {
 
+		setFocusStyle(focusStyle::focusable);
+
 		onGainFocus()	.subscribe(refreshOnEvent<gainFocusData>);
 		onLoseFocus()	.subscribe(refreshOnEvent<loseFocusData>);
 		onCursorEnter()	.subscribe(refreshOnEvent<cursorEnterData>);

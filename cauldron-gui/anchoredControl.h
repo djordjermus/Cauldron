@@ -23,8 +23,6 @@ namespace cauldron::gui {
 		virtual void setAnchor(const common::bounds2<f32>& new_anchor);
 		virtual void setOffset(const common::bounds2<f32>& new_offset);
 		virtual void setMargins(const common::bounds2<f32>& new_margins);
-		virtual void setState(state state) override;
-		virtual void setStyle(style state) override;
 
 		void setBounds(const common::bounds2<i32>& new_bounds) override;
 

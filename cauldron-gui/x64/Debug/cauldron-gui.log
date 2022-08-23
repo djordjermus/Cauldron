@@ -1,17 +1,5 @@
-﻿  textInput.cpp
-C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\textInput.cpp(90,30): warning C4267: '=': conversion from 'size_t' to 'T', possible loss of data
-          with
-          [
-              T=i32
-          ]
-C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\textInput.cpp(97,42): warning C4267: '=': conversion from 'size_t' to 'T', possible loss of data
-          with
-          [
-              T=i32
-          ]
-C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\textInput.cpp(267,21): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
-C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\textInput.cpp(318,20): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
-C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\textInput.cpp(332,19): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
-C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\textInput.cpp(353,20): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
-C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\textInput.cpp(374,21): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
+﻿  checkInput.cpp
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(6,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(7,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\checkInput.cpp(128,29): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
   cauldron-gui.vcxproj -> C:\Users\Admin\source\repos\cauldron\_build\cauldron-gui.lib
