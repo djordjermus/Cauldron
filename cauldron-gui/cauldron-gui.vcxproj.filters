@@ -57,9 +57,6 @@
     <ClInclude Include="defaults.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scrollControl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -102,9 +99,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="_src\defaults.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="_src\scrollControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="_src\window.cpp">

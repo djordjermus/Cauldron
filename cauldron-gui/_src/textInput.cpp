@@ -188,15 +188,19 @@ namespace cauldron::gui {
 
 		// Background
 		if (bg != nullptr)
-			gfx.fillRect({ {}, size }, *bg);
+			gfx.fillRect({ { 1, 1}, size - vector2<f32>(2, 2)}, *bg);
 		
 		// Outline
 		if (ol != nullptr) {
 			paint::pen pen(*ol, 1.0f);
 			gfx.drawRect({ 0.0f, 0.0f, size.x - 1.0f, size.y - 1.0f }, pen);
 		}
+
+		static constexpr float tx_off = 4.0f;
+		static constexpr float tx_off_h = 4.5f;
+		static constexpr float tx_off_mh = 3.5f;
 		
-		bounds2<f32> tx_bounds = { 6.0f, 6.0f, size.x - 7.0f, size.y - 7.0f };
+		bounds2<f32> tx_bounds = { tx_off, tx_off, size.x - tx_off - 1.0f, size.y - tx_off - 1.0f };
 
 		// Text or hint
 		if (fg != nullptr) {
@@ -245,8 +249,8 @@ namespace cauldron::gui {
 							ti._horizontal,
 							ti._vertical);
 						if (pre) {
-							select_bounds.from.x	= pre_bounds.to.x + select_bounds.from.x - 6.0f;
-							select_bounds.to.x		= pre_bounds.to.x + select_bounds.to.x - 6.0f;
+							select_bounds.from.x	= pre_bounds.to.x + select_bounds.from.x - tx_off;
+							select_bounds.to.x		= pre_bounds.to.x + select_bounds.to.x - tx_off;
 						}
 					}
 					else if (pre) {
@@ -254,8 +258,8 @@ namespace cauldron::gui {
 						select_bounds.to.x	 = pre_bounds.to.x + 0.5f;
 					}
 					else {
-						select_bounds.from.x	= 5.5f;
-						select_bounds.to.x		= 6.5f;
+						select_bounds.from.x	= tx_off_mh;
+						select_bounds.to.x		= tx_off_h;
 					}
 					
 					if (post) {
@@ -268,12 +272,12 @@ namespace cauldron::gui {
 								ti._horizontal,
 								ti._vertical);
 						if (sel) {
-							post_bounds.from.x	= select_bounds.to.x + post_bounds.from.x - 6.0f;
-							post_bounds.to.x	= select_bounds.to.x + post_bounds.to.x - 6.0f;
+							post_bounds.from.x	= select_bounds.to.x + post_bounds.from.x - tx_off;
+							post_bounds.to.x	= select_bounds.to.x + post_bounds.to.x - tx_off;
 						}
 						else if (pre) {
-							post_bounds.from.x	= pre_bounds.to.x + post_bounds.from.x - 6.0f;
-							post_bounds.to.x	= pre_bounds.to.x + post_bounds.to.x - 6.0f;
+							post_bounds.from.x	= pre_bounds.to.x + post_bounds.from.x - tx_off;
+							post_bounds.to.x	= pre_bounds.to.x + post_bounds.to.x - tx_off;
 						}
 					}
 					if (select_bounds.size().x == 0) {

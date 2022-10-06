@@ -38,10 +38,10 @@ namespace cauldron::gui {
 			const common::bounds2<f32>& bounds);
 	private:
 
-		void recalcBoundsOnParentSize(control& sender, sizeData& e);
-		void recalcBoundsOnParentSizing(control& sender, sizingData& e);
-		void recalcBoundsOnParentChanged(control& sender, changeParentData& e);
-		void onTerminateAnchored(control& sender, terminateData& e);
+		void recalcBoundsOnParentSize(control& sender, control::sizeData& e);
+		void recalcBoundsOnParentSizing(control& sender, control::sizingData& e);
+		void recalcBoundsOnParentChanged(control& sender, control::changeParentData& e);
+		void onTerminateAnchored(control& sender, control::terminateData& e);
 
 		common::bounds2<f32> _anchor;
 		common::bounds2<i32> _offset;

@@ -2,6 +2,9 @@
 #include "anchoredControl.h"
 #include "theme.h"
 namespace cauldron::gui {
+
+	// Keeps track of child controls
+	// Derived classes must also derive from gui::control
 	class group {
 	public:
 		group() = default;
@@ -12,6 +15,7 @@ namespace cauldron::gui {
 
 		std::vector<control*> _children;
 	};
+
 	class anchoredGroup : public anchoredControl, public group {
 	public:
 		anchoredGroup();

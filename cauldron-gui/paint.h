@@ -161,7 +161,7 @@ namespace cauldron::gui {
 			f32 m21, f32 m22, 
 			f32 m31, f32 m32);
 		void clearTransform();
-		void setClip(const common::bounds2<f32>& clip);
+		void setClip(const bounds_t& clip);
 		void clearClip();
 
 		static bounds_t measureWrite(

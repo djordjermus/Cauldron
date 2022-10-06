@@ -17,29 +17,29 @@ namespace cauldron::gui::defaults {
 			std::make_shared<gui::theme>(
 
 				// BACKGROUND
-				std::make_shared<gui::paint::solidBrush>(0xCCCCCCFF), // NORMAL
-				std::make_shared<gui::paint::solidBrush>(0xCCCCCCFF), // DISABLED
-				std::make_shared<gui::paint::solidBrush>(0xCCCCCCFF), // HOVER
-				std::make_shared<gui::paint::solidBrush>(0xCCCCCCFF), // MOUSE DOWN
-				std::make_shared<gui::paint::solidBrush>(0xCCCCCCFF), // FOCUS
+				std::make_shared<gui::paint::solidBrush>(0xE0E0E0FF), // NORMAL
+				std::make_shared<gui::paint::solidBrush>(0xE0E0E0FF), // DISABLED
+				std::make_shared<gui::paint::solidBrush>(0xE0E0E0FF), // HOVER
+				std::make_shared<gui::paint::solidBrush>(0xE0E0E0FF), // MOUSE DOWN
+				std::make_shared<gui::paint::solidBrush>(0xE0E0E0FF), // FOCUS
 
 				// FOREGROUND
-				std::make_shared<gui::paint::solidBrush>(~0xCCCCCCFF + 0xFF), // NORMAL
-				std::make_shared<gui::paint::solidBrush>(~0x777777FF + 0xFF), // DISABLED
-				std::make_shared<gui::paint::solidBrush>(~0xFFFFFFFF + 0xFF), // HOVER
-				std::make_shared<gui::paint::solidBrush>(~0xDDDDDDFF + 0xFF), // MOUSE DOWN
-				std::make_shared<gui::paint::solidBrush>(~0xAACCEEFF + 0xFF), // FOCUS
+				std::make_shared<gui::paint::solidBrush>(0x202020FF), // NORMAL
+				std::make_shared<gui::paint::solidBrush>(0x404040FF), // DISABLED
+				std::make_shared<gui::paint::solidBrush>(0x000000FF), // HOVER
+				std::make_shared<gui::paint::solidBrush>(0x000000FF), // MOUSE DOWN
+				std::make_shared<gui::paint::solidBrush>(0x000000FF), // FOCUS
 
 				// OUTLINE
-				std::make_shared<gui::paint::solidBrush>(~0xCCCCCC + 0xFF - 0x60606000),
-				std::make_shared<gui::paint::solidBrush>(~0x777777 + 0xFF - 0x60606000),
-				std::make_shared<gui::paint::solidBrush>(~0xFFFFFF + 0xFF - 0x60606000),
-				std::make_shared<gui::paint::solidBrush>(~0xDDDDDD + 0xFF - 0x60606000),
-				std::make_shared<gui::paint::solidBrush>(~0xAACCEE + 0xFF - 0x60606000));
+				std::make_shared<gui::paint::solidBrush>(0x888888FF),
+				std::make_shared<gui::paint::solidBrush>(0x444444FF),
+				std::make_shared<gui::paint::solidBrush>(0xFF0000FF),
+				std::make_shared<gui::paint::solidBrush>(0xCC0000FF),
+				std::make_shared<gui::paint::solidBrush>(0xCC0000FF));
 		return ret;
 	}
-	std::shared_ptr<theme> getTheme() {
-		static std::shared_ptr<theme> ret = 
+	std::shared_ptr<theme> getDarkTheme() {
+		static std::shared_ptr<theme> ret =
 			std::make_shared<gui::theme>(
 
 			// BACKGROUND
@@ -63,5 +63,8 @@ namespace cauldron::gui::defaults {
 			std::make_shared<gui::paint::solidBrush>(0xDDDDDDFF - 0x60606000),
 			std::make_shared<gui::paint::solidBrush>(0xAACCEEFF - 0x60606000));
 		return ret;
+	}
+	std::shared_ptr<theme> getTheme() {
+		return getLightTheme();
 	}
 }

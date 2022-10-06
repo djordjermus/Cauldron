@@ -166,7 +166,6 @@
     <ClInclude Include="paint.h" />
     <ClInclude Include="picture.h" />
     <ClInclude Include="scrollBar.h" />
-    <ClInclude Include="scrollControl.h" />
     <ClInclude Include="textInput.h" />
     <ClInclude Include="theme.h" />
     <ClInclude Include="window.h" />
@@ -185,7 +184,6 @@
     <ClCompile Include="_src\paint.cpp" />
     <ClCompile Include="_src\picture.cpp" />
     <ClCompile Include="_src\scrollBar.cpp" />
-    <ClCompile Include="_src\scrollControl.cpp" />
     <ClCompile Include="_src\textInput.cpp" />
     <ClCompile Include="_src\theme.cpp" />
     <ClCompile Include="_src\window.cpp" />

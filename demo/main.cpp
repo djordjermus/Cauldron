@@ -3,7 +3,12 @@
 #include "cauldron-gui/_include.h"
 #include "cauldron-gui/group.h"
 #include "pizzaForm.h"
+#include "cauldron-gui/defaults.h"
 #include <locale>
+#include <io.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <iostream>
 using namespace cauldron::common;
 namespace plt = cauldron::platform;
 namespace gui = cauldron::gui;
@@ -208,17 +213,15 @@ void pizzaForm::start() {
 	}
 }
 
-#include "cauldron-gui/defaults.h"
 void pizzaForm::onPaintPizzaForm(control& sender, paintData& e) {
 	auto br = gui::defaults::getTheme()->getBackground(gui::theme::select::normal);
 	auto sz = sender.getClientSize();
 	if (br != nullptr)
 		e.getPaint().fillRect({ {}, sz }, *br);
-
 }
 void pizzaForm::onSizingPizzaForm(control& sender, sizingData& e) {
-	gui::control::limitSizingWidth(e, { 640, 999999999 });
-	gui::control::limitSizingHeight(e, { 360, 999999999 });
+	gui::control::limitSizingWidth(e, { 640, 1280 });
+	gui::control::limitSizingHeight(e, { 360, 720 });
 }
 
 void pizzaForm::validateName(control& sender, gui::textInput::validationData& e) {
@@ -230,9 +233,7 @@ void pizzaForm::validateLastName(control& sender, gui::textInput::validationData
 	gui::textInput::validateNotWhitespace(sender, e);
 }
 
-#include <io.h>
-#include <stdio.h>
-#include <fcntl.h>
+
 void pizzaForm::onSubmit(control& sender, eventData& e) {
 	FILE* out = nullptr;
 	_wfopen_s(&out, L"zapisnik.txt", L"a");
@@ -274,4 +275,22 @@ void pizzaForm::onSubmit(control& sender, eventData& e) {
 	}
 	fwprintf(out, L"\n");
 	fclose(out);
+}
+
+void callbackFunction(gui::control& control, eventData& e) {
+	std::cout << "CLICKED\n";
+}
+void paintProc(gui::control& sender) {
+	gui::paint gfx(sender);
+	gfx.clear(0xFFFFFFFF);
+	gui::paint::solidBrush br(0x000000FF);
+	gui::paint::font font(L"Consolas", 36.0f, gui::paint::font::style::bold);
+	gfx.write(
+		L"Hello World",
+		wcslen(L"Hello World"),
+		{ {}, sender.getClientSize() },
+		font,
+		br,
+		gui::paint::alignment::center,
+		gui::paint::alignment::center);
 }

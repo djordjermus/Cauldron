@@ -1,5 +1,226 @@
-﻿  checkInput.cpp
+﻿  button.cpp
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(6,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(7,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\button.cpp(108,18): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
+  checkInput.cpp
 C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(6,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
 C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(7,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
 C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\checkInput.cpp(128,29): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
+  anchoredControl.cpp
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(6,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(7,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\anchoredControl.cpp(26,70): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=i32
+          ]
+          and
+          [
+              T=f32
+          ]
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\anchoredControl.cpp(26,55): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=i32
+          ]
+          and
+          [
+              T=f32
+          ]
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\anchoredControl.cpp(26,51): warning C4244: 'argument': conversion from 'const T' to 'T', possible loss of data
+          with
+          [
+              T=i32
+          ]
+          and
+          [
+              T=f32
+          ]
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\anchoredControl.cpp(26,35): warning C4244: 'argument': conversion from 'const T' to 'T', possible loss of data
+          with
+          [
+              T=i32
+          ]
+          and
+          [
+              T=f32
+          ]
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\anchoredControl.cpp(71,39): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=f32
+          ]
+          and
+          [
+              T=i32
+          ]
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\anchoredControl.cpp(72,39): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=f32
+          ]
+          and
+          [
+              T=i32
+          ]
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\anchoredControl.cpp(73,35): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=f32
+          ]
+          and
+          [
+              T=i32
+          ]
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\anchoredControl.cpp(74,35): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=f32
+          ]
+          and
+          [
+              T=i32
+          ]
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\anchoredControl.cpp(86,30): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=f32
+          ]
+          and
+          [
+              T=i32
+          ]
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\anchoredControl.cpp(87,30): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=f32
+          ]
+          and
+          [
+              T=i32
+          ]
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\anchoredControl.cpp(88,26): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=f32
+          ]
+          and
+          [
+              T=i32
+          ]
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\anchoredControl.cpp(89,26): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=f32
+          ]
+          and
+          [
+              T=i32
+          ]
+  control.cpp
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(6,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(7,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\control.cpp(923,29): warning C4244: 'argument': conversion from 'WPARAM' to 'wch', possible loss of data
+  defaults.cpp
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(6,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(7,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  fillbar.cpp
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(6,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(7,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\fillbar.cpp(99,40): warning C4244: '=': conversion from 'f64' to 'T', possible loss of data
+          with
+          [
+              T=f32
+          ]
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\fillbar.cpp(109,42): warning C4244: '=': conversion from 'f64' to 'T', possible loss of data
+          with
+          [
+              T=f32
+          ]
+  group.cpp
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(6,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(7,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\group.cpp(46,21): warning C4390: ';': empty controlled statement found; is this the intent?
+  label.cpp
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(6,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(7,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\label.cpp(72,23): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
+  paint.cpp
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(6,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(7,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\paint.cpp(50,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\paint.cpp(51,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\paint.cpp(373,4): warning C4244: 'argument': conversion from 'u64' to 'INT', possible loss of data
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\paint.cpp(379,61): warning C4244: 'argument': conversion from 'u64' to 'INT', possible loss of data
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\paint.cpp(426,4): warning C4244: 'argument': conversion from 'u64' to 'INT', possible loss of data
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\paint.cpp(457,38): warning C4244: 'argument': conversion from 'u64' to 'INT', possible loss of data
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\paint.cpp(457,35): warning C4244: 'argument': conversion from 'u64' to 'INT', possible loss of data
+  picture.cpp
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(6,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(7,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  scrollBar.cpp
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(6,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(7,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\scrollBar.cpp(108,38): warning C4244: '=': conversion from 'f64' to 'T', possible loss of data
+          with
+          [
+              T=f32
+          ]
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\scrollBar.cpp(109,37): warning C4244: '=': conversion from 'f64' to 'T', possible loss of data
+          with
+          [
+              T=f32
+          ]
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\scrollBar.cpp(122,38): warning C4244: '=': conversion from 'f64' to 'T', possible loss of data
+          with
+          [
+              T=f32
+          ]
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\scrollBar.cpp(123,37): warning C4244: '=': conversion from 'f64' to 'T', possible loss of data
+          with
+          [
+              T=f32
+          ]
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\scrollBar.cpp(154,32): warning C4244: '=': conversion from 'T' to 'f32', possible loss of data
+          with
+          [
+              T=i32
+          ]
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\scrollBar.cpp(155,35): warning C4244: '=': conversion from 'f64' to 'f32', possible loss of data
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\scrollBar.cpp(156,17): warning C4244: '=': conversion from 'f64' to 'f32', possible loss of data
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\scrollBar.cpp(160,32): warning C4244: '=': conversion from 'T' to 'f32', possible loss of data
+          with
+          [
+              T=i32
+          ]
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\scrollBar.cpp(161,37): warning C4244: '=': conversion from 'f64' to 'f32', possible loss of data
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\scrollBar.cpp(162,19): warning C4244: '=': conversion from 'f64' to 'f32', possible loss of data
+  textInput.cpp
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(6,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(7,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\textInput.cpp(92,30): warning C4267: '=': conversion from 'size_t' to 'T', possible loss of data
+          with
+          [
+              T=i32
+          ]
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\textInput.cpp(99,42): warning C4267: '=': conversion from 'size_t' to 'T', possible loss of data
+          with
+          [
+              T=i32
+          ]
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\textInput.cpp(273,21): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\textInput.cpp(326,20): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\textInput.cpp(340,19): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\textInput.cpp(361,20): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\textInput.cpp(382,21): warning C4267: 'argument': conversion from 'size_t' to 'i32', possible loss of data
+  theme.cpp
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(6,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(7,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  window.cpp
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(6,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\paint.h(7,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\window.cpp(48,52): warning C4552: '!=': result of expression not used
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\window.cpp(64,12): warning C4244: 'argument': conversion from 'f32' to 'BYTE', possible loss of data
+  Generating Code...
+C:\Users\Admin\source\repos\cauldron\cauldron-gui\_src\paint.cpp(302): warning C4715: 'cauldron::gui::paint::pointToCaretIndex': not all control paths return a value
   cauldron-gui.vcxproj -> C:\Users\Admin\source\repos\cauldron\_build\cauldron-gui.lib

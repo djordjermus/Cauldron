@@ -1,3 +1,4 @@
+#include "../paint.h"
 #include "../theme.h"
 namespace cauldron::gui {
 	theme::theme(

@@ -16,7 +16,6 @@
 #include "fillbar.h"
 #include "picture.h"
 #include "scrollBar.h"
-#include "scrollControl.h"
 #include "orientation.h"
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
